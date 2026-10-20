@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+			<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+					<title>邵禹辰 GAME DESIGNER // SHOWCASE</title>
+
+					<style>
+						:root {
+						--bg-color: #f6f0df;
+						--ink: #18171c;
+						--yellow: #ffcf33;
+						--red: #ff4757;
+						--cyan: #2ed573;
+						--purple: #9b59b6;
+						--blue: #3742fa;
+						--panel-bg: #fffcf5;
+						--white: #ffffff;
+						--border-thick: 4px solid var(--ink);
+						--border-mid: 3px solid var(--ink);
+						--shadow-sm: 4px 4px 0px var(--ink);
+						--shadow-md: 7px 7px 0px var(--ink);
+						--shadow-lg: 11px 11px 0px var(--ink);
+						--spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+						}
+
+						* {
+						box-sizing: border-box;
+						margin: 0;
+						padding: 0;
+						-webkit-tap-highlight-color: transparent;
+						}
+
+						body {
+						background-color: var(--bg-color);
+						background-image: radial-gradient(var(--ink) 12%, transparent 12%);
+						background-size: 26px 26px;
+						color: var(--ink);
+						font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+						min-height: 100vh;
+						display: flex;
+						flex-direction: column;
+						padding: 24px;
+						overflow-x: hidden;
+						user-select: none;
+						}
+
+						.container {
+						max-width: 1200px;
+						width: 100%;
+						margin: 0 auto;
+						display: flex;
+						flex-direction: column;
+						flex-grow: 1;
+						gap: 20px;
+						}
+
+						/* 顶栏控制台 */
+						header {
+						background: var(--yellow);
+						border: var(--border-thick);
+						box-shadow: var(--shadow-md);
+						border-radius: 20px;
+						padding: 16px 24px;
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						flex-wrap: wrap;
+						gap: 15px;
+						}
+
+						.brand {
+						display: flex;
+						align-items: center;
+						gap: 12px;
+						}
+
+						.brand h1 {
+						font-size: 1.8rem;
+						font-weight: 900;
+						letter-spacing: 0.5px;
+						}
+
+						.brand-tag {
+						background: var(--white);
+						border: 2px solid var(--ink);
+						border-radius: 999px;
+						padding: 4px 12px;
+						font-size: 0.85rem;
+						font-weight: 900;
+						box-shadow: 2px 2px 0px var(--ink);
+						}
+
+						.header-btns {
+						display: flex;
+						align-items: center;
+						gap: 10px;
+						flex-wrap: wrap;
+						}
+
+						/* Q 弹实体果汁感按钮 */
+						.btn {
+						font-family: inherit;
+						font-size: 0.95rem;
+						font-weight: 900;
+						padding: 10px 18px;
+						border-radius: 14px;
+						border: var(--border-mid);
+						box-shadow: var(--shadow-sm);
+						cursor: pointer;
+						display: inline-flex;
+						align-items: center;
+						justify-content: center;
+						gap: 8px;
+						text-decoration: none;
+						color: var(--ink);
+						transition: transform 0.1s var(--spring), box-shadow 0.1s ease;
+						white-space: nowrap;
+						outline: none;
+						}
+
+						.btn:hover {
+						transform: translate(-2px, -2px) scale(1.02);
+						box-shadow: var(--shadow-md);
+						}
+
+						.btn:active {
+						transform: translate(3px, 3px) scale(0.97);
+						box-shadow: 1px 1px 0px var(--ink);
+						}
+
+						.btn-create { background: var(--cyan); }
+						.btn-action { background: var(--white); }
+						.btn-danger { background: var(--red); color: white; }
+						.btn-edit { background: #70a1ff; color: white; }
+
+						/* 单项目舞台全屏大版面 (Showcase Stage) */
+						.showcase-stage {
+						background: var(--panel-bg);
+						border: var(--border-thick);
+						box-shadow: var(--shadow-lg);
+						border-radius: 28px;
+						flex-grow: 1;
+						display: flex;
+						flex-direction: column;
+						padding: 34px;
+						position: relative;
+						min-height: 560px;
+						}
+
+						.stage-header {
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						border-bottom: 3.5px dashed var(--ink);
+						padding-bottom: 18px;
+						margin-bottom: 24px;
+						}
+
+						.stage-index-badge {
+						background: var(--ink);
+						color: var(--yellow);
+						padding: 6px 16px;
+						border-radius: 999px;
+						font-size: 1.1rem;
+						font-weight: 900;
+						letter-spacing: 1px;
+						}
+
+						.stage-controls {
+						display: flex;
+						gap: 10px;
+						}
+
+						.stage-body {
+						display: grid;
+						grid-template-columns: 1.1fr 1fr;
+						gap: 36px;
+						flex-grow: 1;
+						}
+
+						@media (max-width: 900px) {
+						.stage-body { grid-template-columns: 1fr; }
+						}
+
+						.stage-left {
+						display: flex;
+						flex-direction: column;
+						gap: 20px;
+						}
+
+						.giant-banner {
+						background-color: var(--purple);
+						border: var(--border-thick);
+						border-radius: 22px;
+						box-shadow: var(--shadow-md);
+						height: 250px;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						overflow: hidden;
+						}
+
+						.giant-banner-emoji {
+						font-size: 6.5rem;
+						filter: drop-shadow(6px 6px 0px var(--ink));
+						animation: bounceEmoji 3s ease-in-out infinite;
+						}
+
+						@keyframes bounceEmoji {
+						0%, 100% { transform: translateY(0) rotate(0deg); }
+						50% { transform: translateY(-8px) rotate(-3deg); }
+						}
+
+						.resource-showcase {
+						display: flex;
+						flex-direction: column;
+						gap: 12px;
+						}
+
+						.resource-showcase-title {
+						font-size: 0.95rem;
+						font-weight: 900;
+						text-transform: uppercase;
+						letter-spacing: 1px;
+						color: #635f75;
+						}
+
+						.resource-grid {
+						display: grid;
+						grid-template-columns: 1fr 1fr;
+						gap: 14px;
+						}
+
+						@media (max-width: 600px) {
+						.resource-grid { grid-template-columns: 1fr; }
+						}
+
+						.big-chip {
+						background: var(--white);
+						border: var(--border-mid);
+						box-shadow: var(--shadow-sm);
+						border-radius: 16px;
+						padding: 14px;
+						font-weight: 900;
+						font-size: 0.95rem;
+						text-decoration: none;
+						color: var(--ink);
+						display: flex;
+						align-items: center;
+						gap: 10px;
+						cursor: pointer;
+						transition: transform 0.1s var(--spring), box-shadow 0.1s ease;
+						}
+
+						.big-chip:hover {
+						transform: translate(-2px, -2px);
+						box-shadow: var(--shadow-md);
+						}
+
+						.big-chip-pdf { background: #ff7675; color: white; }
+						.big-chip-web { background: #74b9ff; }
+						.big-chip-pkg { background: #55efc4; }
+						.big-chip-vid { background: #ffeaa7; }
+
+						.stage-right {
+						display: flex;
+						flex-direction: column;
+						gap: 20px;
+						background: var(--white);
+						border: var(--border-thick);
+						border-radius: 22px;
+						box-shadow: var(--shadow-md);
+						padding: 26px;
+						user-select: text;
+						}
+
+						.project-hero-title {
+						font-size: 2.2rem;
+						font-weight: 900;
+						line-height: 1.2;
+						}
+
+						.role-badge {
+						background: var(--yellow);
+						border: 2px solid var(--ink);
+						border-radius: 8px;
+						padding: 4px 10px;
+						font-weight: 900;
+						font-size: 0.85rem;
+						display: inline-block;
+						margin-top: 10px;
+						box-shadow: 2px 2px 0 var(--ink);
+						}
+
+						.content-box {
+						display: flex;
+						flex-direction: column;
+						gap: 8px;
+						}
+
+						.box-label {
+						font-size: 0.85rem;
+						font-weight: 900;
+						color: #7b7891;
+						text-transform: uppercase;
+						letter-spacing: 0.5px;
+						}
+
+						.box-text {
+						font-size: 1.05rem;
+						line-height: 1.6;
+						font-weight: 700;
+						color: #2b2a33;
+						white-space: pre-wrap;
+						}
+
+						/* 底部翻页控制器 */
+						.stage-nav {
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						margin-top: 24px;
+						padding-top: 18px;
+						border-top: 3.5px dashed var(--ink);
+						flex-wrap: wrap;
+						gap: 12px;
+						}
+
+						.pagination-dots {
+						display: flex;
+						gap: 8px;
+						align-items: center;
+						}
+
+						.page-dot {
+						width: 14px;
+						height: 14px;
+						border: 2.5px solid var(--ink);
+						border-radius: 50%;
+						background: var(--white);
+						cursor: pointer;
+						transition: all 0.15s ease;
+						}
+
+						.page-dot.active {
+						background: var(--ink);
+						transform: scale(1.3);
+						}
+
+						/* 模态框 */
+						.modal-backdrop {
+						position: fixed;
+						top: 0;
+						left: 0;
+						width: 100vw;
+						height: 100vh;
+						background: rgba(24, 23, 28, 0.7);
+						display: none;
+						align-items: center;
+						justify-content: center;
+						z-index: 9999;
+						padding: 20px;
+						}
+
+						.modal-backdrop.open { display: flex; }
+
+						.modal {
+						background: var(--white);
+						border: var(--border-thick);
+						box-shadow: var(--shadow-lg);
+						border-radius: 24px;
+						width: 100%;
+						max-width: 620px;
+						max-height: 90vh;
+						overflow-y: auto;
+						padding: 30px;
+						}
+
+						.modal-header {
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						border-bottom: var(--border-thick);
+						padding-bottom: 14px;
+						margin-bottom: 20px;
+						}
+
+						.form-group {
+						margin-bottom: 14px;
+						display: flex;
+						flex-direction: column;
+						gap: 6px;
+						}
+
+						.file-input-wrapper {
+						display: flex;
+						gap: 8px;
+						align-items: center;
+						}
+
+						label { font-size: 0.95rem; font-weight: 900; }
+
+						input[type="text"], textarea {
+						width: 100%;
+						padding: 10px 14px;
+						border: 3px solid var(--ink);
+						border-radius: 12px;
+						font-family: inherit;
+						font-size: 0.95rem;
+						font-weight: 700;
+						outline: none;
+						background: #fafafa;
+						}
+
+						input[type="text"]:focus, textarea:focus {
+						background: #fff;
+						border-color: var(--purple);
+						}
+
+						.modal-footer {
+						display: flex;
+						justify-content: flex-end;
+						gap: 12px;
+						margin-top: 24px;
+						}
+
+						/* Q弹提示气泡 (Toast) */
+						.toast-box {
+						position: fixed;
+						bottom: 24px;
+						right: 24px;
+						background: var(--ink);
+						color: var(--yellow);
+						border: 3px solid var(--ink);
+						padding: 12px 20px;
+						border-radius: 14px;
+						font-weight: 900;
+						font-size: 1rem;
+						box-shadow: var(--shadow-md);
+						z-index: 10000;
+						transform: translateY(120px);
+						opacity: 0;
+						transition: all 0.25s var(--spring);
+						pointer-events: none;
+						}
+
+						.toast-box.show {
+						transform: translateY(0);
+						opacity: 1;
+						}
+					</style>
+				</head>
+	<body>
+
+		<div class="container">
+			<header>
+				<div class="brand">
+					<h1>邵禹辰 👾 GDD PORTFOLIO</h1>
+					<span class="brand-tag">🎯 游戏策划核心案集</span>
+				</div>
+				<div class="header-actions">
+					<div class="header-btns">
+						<button id="backupBtn" class="btn btn-action" type="button" title="导出数据备份">📤 备份数据</button>
+						<button id="restoreBtn" class="btn btn-action" type="button" title="导入数据备份">📥 导入数据</button>
+						<input type="file" id="fileInput" accept=".json" style="display:none">
+							<button id="createBtn" class="btn btn-create" type="button">＋ 撰写新策划案</button>
+						</div>
+				</div>
+			</header>
+
+			<main class="showcase-stage" id="stageContainer"></main>
+		</div>
+
+		<!-- 编辑与录入弹窗 -->
+		<div class="modal-backdrop" id="modalBackdrop">
+			<div class="modal">
+				<div class="modal-header">
+					<h2 id="modalTitle" style="font-weight:900;">⚡ 策划项目档案</h2>
+					<button class="btn" style="padding:4px 10px; background:var(--yellow);" id="closeModalBtn" type="button">✕</button>
+				</div>
+
+				<form id="projectForm">
+					<input type="hidden" id="editId">
+
+						<div class="form-group">
+							<label>🎯 项目名称 *</label>
+							<input type="text" id="pTitle" placeholder="例如: 幻界回廊：Roguelike战斗系统重构案" required="">
+        </div>
+
+						<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+							<div class="form-group">
+								<label>🎨 代表 Emoji</label>
+								<input type="text" id="pEmoji" placeholder="🗡️ / 🧙‍♂️ / 🎲" value="🎮">
+          </div>
+							<div class="form-group">
+								<label>🏷️ 策划核心类型</label>
+								<input type="text" id="pRole" placeholder="如：核心战斗 / 数值架构 / 关卡白模">
+          </div>
+						</div>
+
+						<div class="form-group">
+							<label>📝 策划案详述 / 核心设计拆解</label>
+							<textarea id="pDesc" rows="4" placeholder="详细描述玩法心流、系统解耦方案、状态机设计或数值平滑曲线..."></textarea>
+						</div>
+
+						<!-- 针对 4 种交付格式（支持网络 URL 或 直接选取本地文件） -->
+						<div class="form-group">
+							<label>📄 PDF 策划案 (在线地址 或 本地文件)</label>
+							<div class="file-input-wrapper">
+								<input type="text" id="pPdf" placeholder="https://... 或 本地选择">
+									<button type="button" class="btn btn-action" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('filePdfInput').click()">📁 选文件</button>
+									<input type="file" id="filePdfInput" accept=".pdf" style="display:none">
+          </div>
+						</div>
+
+						<div class="form-group">
+							<label>🌐 在线试玩 / 网页链接 (Steam / Itch.io / WebGL)</label>
+							<input type="text" id="pWeb" placeholder="https://itch.io/...">
+        </div>
+
+						<div class="form-group">
+							<label>📦 游戏 Demo / 安装包 (下载链接 或 本地包)</label>
+							<div class="file-input-wrapper">
+								<input type="text" id="pPkg" placeholder="https://... 或 本地选择">
+									<button type="button" class="btn btn-action" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('filePkgInput').click()">📁 选文件</button>
+									<input type="file" id="filePkgInput" style="display:none">
+          </div>
+						</div>
+
+						<div class="form-group">
+							<label>🎬 实机视频 / 演示 (B站 / YouTube 或 本地视频)</label>
+							<div class="file-input-wrapper">
+								<input type="text" id="pVid" placeholder="https://bilibili.com/... 或 本地选择">
+									<button type="button" class="btn btn-action" style="padding:8px 12px; font-size:0.85rem;" onclick="document.getElementById('fileVidInput').click()">📁 选视频</button>
+									<input type="file" id="fileVidInput" accept="video/*" style="display:none">
+          </div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn" style="background:#eee" id="cancelBtn">取消</button>
+							<button type="submit" class="btn btn-create">保存并立即呈现 💾</button>
+						</div>
+					</form>
+			</div>
+		</div>
+
+		<!-- 提示气泡 -->
+		<div class="toast-box" id="toastBox">✨ 操作已执行</div>
+
+		<script>
+			/* ========================================================
+			1. 提示气泡反馈 (Toast)
+			======================================================== */
+			const toastBox = document.getElementById('toastBox');
+			let toastTimer = null;
+			function showToast(msg) {
+			if (!toastBox) return;
+			toastBox.textContent = msg;
+			toastBox.classList.add('show');
+			clearTimeout(toastTimer);
+			toastTimer = setTimeout(() => {
+			toastBox.classList.remove('show');
+			}, 1800);
+			}
+
+			/* ========================================================
+			2. 初始预设数据
+			======================================================== */
+			const DEFAULT_PROJECTS = [
+			{
+			id: "proj_tata_breakdown",
+			title: "《塔塔冒险队》案例拆解",
+			emoji: "🧩",
+			role: "产品分析 / 系统拆解 / 经济与社交循环",
+			color: "#2ed573",
+			desc: "围绕《塔塔冒险队》的产品定位、目标用户与核心卖点展开案例拆解。\n1. 梳理弹珠机资源产出、塔塔养成与主线推进构成的高频成长微循环；\n2. 分析护盾、异步掠夺和周期合作活动形成的社交与长线留存宏循环；\n3. 从弹珠机、养成、战斗、经济、活动与社交等维度观察系统之间的资源联动。\n\n交付物为 25 页案例拆解 PDF，标题与项目名称一致。",
+			pdf: "assets/塔塔冒险队_案例拆解.pdf",
+			pdfLabel: "查看《塔塔冒险队》案例拆解 PDF",
+			web: "",
+			pkg: "",
+			vid: ""
+			},
+			{
+			id: "proj_downfall_defense",
+			title: "《下坠防线》游戏原型",
+			emoji: "🏭",
+			role: "系统策划 / 原型设计 / 波次塔防",
+			color: "#ff9f43",
+			desc: "单机机械工场与波次防御原型：从零件生产、部件制造和工具组装出发，搭建动力履带闭环并抵御持续增强的敌人。\n1. 以生产、建造守波、永久科研组成短中长三层循环；\n2. 通过动力网络、自由布防、建筑耐久与工业威胁形成风险—收益取舍；\n3. 提供 Windows 原型压缩包与 11 页“当前实装内容”策划案，便于分别核对可运行构建和系统说明。\n\n素材核对：ZIP 内部构建显示《落岩工场 V0.7-作品集展示版》，与附件外部名称《下坠防线》不同；页面保留该差异，不推定为同一版本命名。",
+			pdf: "assets/下坠防线_策划案.pdf",
+			pdfLabel: "查看《下坠防线》当前实装内容策划案",
+			web: "",
+			pkg: "embedded-zip:downfall-defense",
+			pkgLabel: "下载 Windows 原型 ZIP",
+			vid: ""
+			},
+			{
+			id: "proj_zero_hour_tower",
+			title: "《零时之塔》｜TapTap 2026 聚光灯项目",
+			emoji: "🕰️",
+			role: "聚光灯 GameJam / 3D 即时战斗 / 卡牌构筑",
+			color: "#9b59b6",
+			desc: "TapTap 官方页面展示的 2026 聚光灯 GameJam 项目：玩家扮演能够干涉时间的魔女，进入因“时涌”而让不同时代重叠的地牢，以卡牌构筑结合 3D 即时战斗推进探索。\n1. 官方页面用于核对项目介绍、团队信息与试玩入口；\n2. 随附上传的白盒 HTML 标题为《回路地牢·战术白盒》，包含自由时停、五张手牌、十房探索与牌组操作；\n3. 该白盒文件未出现《零时之塔》名称，因此这里只将其标注为补充能力样例，不表述为《零时之塔》已确认关卡或既有实装。",
+			pdf: "",
+			web: "https://www.taptap.cn/app/977535",
+			webLabel: "打开《零时之塔》TapTap 官方页",
+			pkg: "assets/回路地牢_战术白盒.html",
+			pkgLabel: "打开网页版游戏白盒",
+			vid: ""
+			}
+			];
+
+			let currentIndex = 0;
+
+			function getProjects() {
+			try {
+			const stored = localStorage.getItem('gamedev_portfolio_v4');
+			if (stored) {
+			const parsed = JSON.parse(stored);
+			if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+			}
+			} catch (e) {}
+			return DEFAULT_PROJECTS;
+			}
+
+			function saveProjects(data) {
+			try {
+			localStorage.setItem('gamedev_portfolio_v4', JSON.stringify(data));
+			} catch (e) {}
+			renderStage();
+			}
+
+			/* ========================================================
+			3. 核心：整版舞台渲染与循环导航
+			======================================================== */
+			const stage = document.getElementById('stageContainer');
+
+			function renderStage() {
+			const projects = getProjects();
+
+			if (projects.length === 0) {
+			stage.innerHTML = `
+			<div style="text-align:center; margin:auto; padding:60px 20px;">
+				<div style="font-size: 5rem;">📭</div>
+				<h2 style="font-size:2rem; margin-bottom:12px;">暂无策划案项目</h2>
+				<p style="color:#666; font-weight:700; margin-bottom:20px;">点击下方按钮立即创建你的第一个案例！</p>
+				<button class="btn btn-create" type="button" onclick="openModal(false)">立即新建项目 ✍️</button>
+			</div>
+			`;
+			return;
+			}
+
+			// 保证在合法索引内
+			if (currentIndex >= projects.length) currentIndex = 0;
+			if (currentIndex < 0) currentIndex = projects.length - 1;
+
+      const proj = projects[currentIndex];
+
+      // 交付物渲染
+      let resourceItems = [];
+      if (proj.pdf) {
+        resourceItems.push(`<div class="big-chip big-chip-pdf" onclick="openResource('${encodeURI(proj.pdf)}', 'PDF')">
+				<span>📄</span> ${proj.pdfLabel || '查看详细策划案 (PDF)'}
+			</div>`);
+			}
+			if (proj.web) {
+			resourceItems.push(`<div class="big-chip big-chip-web" onclick="openResource('${encodeURI(proj.web)}', 'WEB')">
+				<span>🌐</span> ${proj.webLabel || '在线即玩 / 试玩链接'}
+			</div>`);
+			}
+			if (proj.pkg) {
+			resourceItems.push(`<div class="big-chip big-chip-pkg" onclick="openResource('${encodeURI(proj.pkg)}', 'PKG')">
+				<span>📦</span> ${proj.pkgLabel || '下载游戏 Demo / 安装包'}
+			</div>`);
+			}
+			if (proj.vid) {
+			resourceItems.push(`<div class="big-chip big-chip-vid" onclick="openResource('${encodeURI(proj.vid)}', 'VID')">
+				<span>🎬</span> ${proj.vidLabel || '观看实机演示 / 讲解'}
+			</div>`);
+			}
+
+			const resourceHtml = resourceItems.length > 0
+			? resourceItems.join('')
+			: '<p style="color:#888; font-weight:700;">（该案暂未挂载外部交付资源）</p>';
+
+			// 生成圆点导航
+			let dotsHtml = '';
+			for (let i = 0; i < projects.length; i++) {
+        dotsHtml += `<div class="page-dot ${i === currentIndex ? 'active' : ''}" onclick="goToProject(${i})" title="跳转到第 ${i+1} 个项目"></div>`;
+			}
+
+			stage.innerHTML = `
+			<div class="stage-header">
+				<div class="stage-index-badge">CASE ${currentIndex + 1} / ${projects.length}</div>
+				<div class="stage-controls">
+					<button class="btn btn-edit" type="button" onclick="editCurrentProject()">✏️ 编辑此案</button>
+					<button class="btn btn-danger" type="button" onclick="deleteCurrentProject()">🗑️ 删除</button>
+				</div>
+			</div>
+
+			<div class="stage-body">
+				<div class="stage-left">
+					<div class="giant-banner" style="background-color: ${proj.color || 'var(--purple)'}">
+						<div class="giant-banner-emoji">${proj.emoji || '🎮'}</div>
+					</div>
+
+					<div class="resource-showcase">
+						<div class="resource-showcase-title">📁 交付物与可验证资源 (Deliverables)</div>
+						<div class="resource-grid">
+							${resourceHtml}
+						</div>
+					</div>
+				</div>
+
+				<div class="stage-right">
+					<div>
+						<div class="box-label">PROJECT NAME</div>
+						<h2 class="project-hero-title">${proj.title}</h2>
+						${proj.role ? `<span class="role-badge">${proj.role}</span>` : ''}
+					</div>
+
+					<div class="content-box" style="flex-grow: 1;">
+						<div class="box-label">DESIGN BREAKDOWN // 核心设计思路与落地</div>
+						<div class="box-text">${proj.desc || '暂无详细描述。'}</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="stage-nav">
+				<button class="btn btn-action" type="button" onclick="prevProject()">
+					◀ 上一个项目
+				</button>
+				<div class="pagination-dots">
+					${dotsHtml}
+				</div>
+				<button class="btn btn-action" type="button" onclick="nextProject()">
+					下一个项目 ▶
+				</button>
+			</div>
+			`;
+			}
+
+			/* ========================================================
+			4. 翻页与直达
+			======================================================== */
+			window.prevProject = function() {
+			const list = getProjects();
+			if (list.length <= 1) return;
+			currentIndex = (currentIndex - 1 + list.length) % list.length;
+			showToast(`⏪ 切换到第 ${currentIndex + 1} 个案例`);
+			renderStage();
+			};
+
+			window.nextProject = function() {
+			const list = getProjects();
+			if (list.length <= 1) return;
+			currentIndex = (currentIndex + 1) % list.length;
+			showToast(`⏩ 切换到第 ${currentIndex + 1} 个案例`);
+			renderStage();
+			};
+
+			window.goToProject = function(idx) {
+			currentIndex = idx;
+			showToast(`🎯 跳转到第 ${currentIndex + 1} 个案例`);
+			renderStage();
+			};
+
+			// 资源打开适配
+			const EMBEDDED_DOWNLOADS = {
+			"embedded-zip:downfall-defense": {
+			filename: "下坠防线-Windows-x86_64.zip",
+			parts: [
+			"assets/downfall-defense.part01.bin",
+			"assets/downfall-defense.part02.bin",
+			"assets/downfall-defense.part03.bin",
+			"assets/downfall-defense.part04.bin"
+			]
+			}
+			};
+
+			window.openResource = async function(url, type) {
+			if (!url || url === 'undefined') {
+			showToast("⚠️ 该项目未提供该项有效资源");
+			return;
+			}
+			const embedded = EMBEDDED_DOWNLOADS[url];
+			if (embedded) {
+			showToast("⏳ 正在准备 Windows 原型下载...");
+			try {
+			const responses = await Promise.all(embedded.parts.map(part => fetch(part)));
+			if (responses.some(response => !response.ok)) throw new Error('part download failed');
+			const buffers = await Promise.all(responses.map(response => response.arrayBuffer()));
+			const blobUrl = URL.createObjectURL(new Blob(buffers, { type: 'application/zip' }));
+			const dl = document.createElement('a');
+			dl.href = blobUrl;
+			dl.download = embedded.filename;
+			document.body.appendChild(dl);
+			dl.click();
+			dl.remove();
+			setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+			showToast("✅ Windows 原型下载已开始");
+			} catch (error) {
+			showToast("⚠️ 下载准备失败，请刷新页面后重试");
+			}
+			return;
+			}
+			showToast(`🚀 正在打开 [${type}] 资源...`);
+			window.open(decodeURI(url), '_blank');
+			};
+
+			/* ========================================================
+			5. 编辑、删除与模态框
+			======================================================== */
+			const modal = document.getElementById('modalBackdrop');
+			const form = document.getElementById('projectForm');
+			const editIdInput = document.getElementById('editId');
+			const modalTitle = document.getElementById('modalTitle');
+
+			window.openModal = function(isEdit = false) {
+			modal.classList.add('open');
+			if (!isEdit) {
+			form.reset();
+			editIdInput.value = '';
+			modalTitle.textContent = "⚡ 部署新策划案";
+			}
+			};
+
+			window.closeModal = function() {
+			modal.classList.remove('open');
+			};
+
+			window.editCurrentProject = function() {
+			const projects = getProjects();
+			const proj = projects[currentIndex];
+			if (!proj) return;
+
+			editIdInput.value = proj.id;
+			modalTitle.textContent = "✏️ 编辑：" + proj.title;
+
+			document.getElementById('pTitle').value = proj.title || '';
+			document.getElementById('pEmoji').value = proj.emoji || '🎮';
+			document.getElementById('pRole').value = proj.role || '';
+			document.getElementById('pDesc').value = proj.desc || '';
+			document.getElementById('pPdf').value = proj.pdf || '';
+			document.getElementById('pWeb').value = proj.web || '';
+			document.getElementById('pPkg').value = proj.pkg || '';
+			document.getElementById('pVid').value = proj.vid || '';
+
+			openModal(true);
+			};
+
+			window.deleteCurrentProject = function() {
+			const projects = getProjects();
+			const current = projects[currentIndex];
+			if (!current) return;
+
+			if (confirm(`⚠️ 确认要删除项目「${current.title}」吗？`)) {
+			projects.splice(currentIndex, 1);
+			if (currentIndex >= projects.length && currentIndex > 0) {
+			currentIndex--;
+			}
+			saveProjects(projects);
+			showToast("🗑️ 已成功删除该策划案");
+			}
+			};
+
+			// 绑定模态框基础关闭按钮
+			document.getElementById('createBtn').onclick = () => openModal(false);
+			document.getElementById('closeModalBtn').onclick = closeModal;
+			document.getElementById('cancelBtn').onclick = closeModal;
+			modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+
+			// 本地文件选取转 Base64 / URL（解决 file:// 本地沙箱无法链接的问题）
+			function handleLocalFile(fileInputEl, targetTextEl, labelName) {
+			fileInputEl.addEventListener('change', (e) => {
+			const file = e.target.files[0];
+			if (!file) return;
+			showToast(`⏳ 正在载入本地文件: ${file.name}`);
+			const reader = new FileReader();
+			reader.onload = (event) => {
+			targetTextEl.value = event.target.result;
+			showToast(`✅ ${labelName} 已成功附加`);
+			};
+			reader.readAsDataURL(file);
+			});
+			}
+
+			handleLocalFile(document.getElementById('filePdfInput'), document.getElementById('pPdf'), 'PDF策划案');
+			handleLocalFile(document.getElementById('filePkgInput'), document.getElementById('pPkg'), '游戏安装包');
+			handleLocalFile(document.getElementById('fileVidInput'), document.getElementById('pVid'), '演示视频');
+
+			const COLOR_PALETTE = ['#ffcf33', '#ff7675', '#74b9ff', '#9b59b6', '#2ed573', '#ff9f43'];
+
+			// 表单提交保存
+			form.onsubmit = function(e) {
+			e.preventDefault();
+
+			const projects = getProjects();
+			const editId = editIdInput.value;
+
+			const projectData = {
+			title: document.getElementById('pTitle').value.trim(),
+			emoji: document.getElementById('pEmoji').value.trim() || '🎮',
+			role: document.getElementById('pRole').value.trim(),
+			desc: document.getElementById('pDesc').value.trim(),
+			pdf: document.getElementById('pPdf').value.trim(),
+			web: document.getElementById('pWeb').value.trim(),
+			pkg: document.getElementById('pPkg').value.trim(),
+			vid: document.getElementById('pVid').value.trim(),
+			};
+
+			if (editId) {
+			const idx = projects.findIndex(p => p.id === editId);
+			if (idx !== -1) {
+			projects[idx] = { ...projects[idx], ...projectData };
+			}
+			showToast("🎉 策划案已成功更新！");
+			} else {
+			const newProj = {
+			id: 'proj_' + Date.now(),
+			color: COLOR_PALETTE[Math.floor(Math.random() * COLOR_PALETTE.length)],
+			...projectData
+			};
+			projects.unshift(newProj);
+			currentIndex = 0;
+			showToast("🎉 新策划案已成功部署！");
+			}
+
+			saveProjects(projects);
+			closeModal();
+			};
+
+			/* ========================================================
+			6. 数据备份与导入
+			======================================================== */
+			document.getElementById('backupBtn').onclick = function() {
+			const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(getProjects(), null, 2));
+			const dl = document.createElement('a');
+			dl.setAttribute("href", dataStr);
+			dl.setAttribute("download", `GDD_Portfolio_Backup_${new Date().toISOString().slice(0,10)}.json`);
+			document.body.appendChild(dl);
+			dl.click();
+			dl.remove();
+			showToast("💾 备份 JSON 已导出！");
+			};
+
+			const fileInput = document.getElementById('fileInput');
+			document.getElementById('restoreBtn').onclick = () => fileInput.click();
+
+			fileInput.onchange = function(e) {
+			const file = e.target.files[0];
+			if (!file) return;
+			const reader = new FileReader();
+			reader.onload = (event) => {
+			try {
+			const imported = JSON.parse(event.target.result);
+			if (Array.isArray(imported)) {
+			saveProjects(imported);
+			currentIndex = 0;
+			showToast(`🎉 成功导入 ${imported.length} 个策划案！`);
+			} else {
+			alert('文件必须是有效的 JSON 数组。');
+			}
+			} catch (err) {
+			alert('解析失败，请检查文件格式。');
+			}
+			};
+			reader.readAsText(file, "UTF-8");
+			fileInput.value = '';
+			};
+
+			// 键盘左右切页
+			window.onkeydown = function(e) {
+			if (modal.classList.contains('open')) return;
+			if (e.key === 'ArrowLeft') prevProject();
+			if (e.key === 'ArrowRight') nextProject();
+			};
+
+			// 初始化渲染
+			renderStage();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>回路地牢 · 战术白盒</title>
+<meta name="description" content="五张手牌，自由时停，抽牌交换与同名融合。穿越十个房间，用金币变牌与拼接。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%230b1117' d='M4 4h56v56H4z'/%3E%3Cpath fill='none' stroke='%235ef2d6' stroke-width='6' d='M16 16h32v32H16zM16 32h32M32 16v32'/%3E%3C/svg%3E">
+<style data-source="journey.css">
+:root{--bg:#05090c;--panel:#0a141cf5;--line:#29414c;--mint:#5ef2d6;--cyan:#79cafa;--amber:#ffbf79;--red:#ff727f;--text:#e8f2f3;--muted:#94aab6}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,"Microsoft YaHei",system-ui,sans-serif;font-size:14px}button{font:inherit;color:inherit;touch-action:manipulation}button:focus-visible{outline:2px solid var(--mint);outline-offset:3px}button:disabled{cursor:not-allowed;opacity:.4}[hidden]{display:none!important}canvas{position:fixed;inset:0;width:100%;height:100%;cursor:crosshair}.top{position:fixed;z-index:20;left:24px;right:24px;top:20px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;gap:15px}.brand{display:flex;gap:15px;align-items:center}.sigil{width:33px;height:33px;border:1px solid var(--mint);display:grid;place-items:center;transform:rotate(45deg);background:#071916}.sigil i{width:10px;height:10px;background:var(--mint)}.title b{font-size:15px;letter-spacing:.2em}.title span{display:block;font-size:11px;color:var(--muted);margin-top:6px}.stats{display:flex;gap:8px}.chip{border:1px solid var(--line);background:#081017ed;padding:10px 12px;color:var(--muted);font-size:12px}.chip strong{color:var(--text);margin-left:4px}.currency strong{color:var(--amber)}.hpbar{position:fixed;top:80px;left:50%;transform:translateX(-50%);width:min(340px,40vw);text-align:center;z-index:3}.enemy-name{font-size:12px;color:#b0c2cb}.bar{height:5px;background:#21303a;margin-top:8px}.bar i{height:100%;display:block;background:var(--red);transition:width .2s}.mode{position:fixed;top:118px;left:50%;transform:translateX(-50%);padding:8px 15px;background:#0b2222de;border:1px solid #28504a;z-index:3;color:var(--mint);font-size:12px;opacity:0;pointer-events:none;white-space:nowrap}.mode.show{opacity:1}.log{position:fixed;top:155px;right:24px;width:220px;z-index:3;border-left:1px solid var(--line);padding:0 0 0 12px}.log h3{font-size:11px;font-weight:400;letter-spacing:.2em;color:var(--muted)}.log div{font-size:12px;line-height:1.8;color:#9bb0ba}.log div:first-of-type{color:var(--mint)}body:not([data-screen="battle"]) .hpbar,body:not([data-screen="battle"]) .mode,body:not([data-screen="battle"]) .log,body:not([data-screen="battle"]) #hud{display:none}.btn{border:1px solid #36515c;background:#10212a;color:var(--text);padding:11px 17px;cursor:pointer;transition:background .15s,border-color .15s}.btn:hover:not(:disabled){border-color:var(--mint);background:#19332f}.btn.primary{background:var(--mint);color:#06251f;border-color:var(--mint);font-weight:700}.btn.accent{border-color:#9374b7;color:#dfc4ff}.btn.ghost{background:transparent;color:#a2b8c2}.btn.wide{width:100%}.actions,.menu-actions{display:flex;gap:10px;flex-wrap:wrap}kbd{font-family:inherit;font-size:11px;border:1px solid #52736b70;padding:2px 5px;white-space:nowrap}.muted{color:var(--muted)}#journey{position:fixed;inset:0;z-index:10;overflow:auto;padding:114px max(24px,6vw) 40px;background:linear-gradient(110deg,#060e16f5,#09151ed9 70%,#0b1b21ed)}body[data-screen="cleared"] #journey{background:linear-gradient(0deg,#060d14f5,#071219dc 65%,#09151bb3)}.modal-wrap,.sector{max-width:1100px;margin:3vh auto 0}.modal-wrap h1,.page-head h1{font-size:clamp(28px,3.5vw,42px);font-weight:600;letter-spacing:.07em;margin:16px 0}.eyebrow{color:var(--mint);font-size:11px;letter-spacing:.2em;text-transform:uppercase}.lead,.page-head p{color:var(--muted);line-height:1.9;font-size:15px}.menu-copy{max-width:850px;margin-top:9vh}.menu-copy h1{font-size:clamp(42px,6vw,72px);letter-spacing:.15em}.menu-copy .eng{color:#628995;font-size:12px;letter-spacing:.4em}.intro{font-size:20px;color:#b2c7cd;line-height:1.9;margin:30px 0}.save-note{font-size:13px;line-height:1.8;color:var(--muted);margin-top:24px}.page-head{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}.room-summary{display:flex;justify-content:space-between;gap:24px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:24px}.door-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:25px}.room-door{min-height:250px;border:1px solid #3d665f;border-top:4px solid var(--mint);background:linear-gradient(155deg,#122b2f,#071219);padding:28px;text-align:left;cursor:pointer;position:relative}.room-door:hover{border-color:#98ffe8;background:linear-gradient(155deg,#173b39,#0b1d22)}.room-door h2,.room-door b{font-size:24px;font-weight:600}.room-door p,.room-door small{display:block;color:#a1bac4;line-height:1.8;margin-top:14px}.door-icon,.room-mark{font-size:32px;color:var(--mint)}.room-door .door-cta{display:block;color:var(--mint);margin-top:25px}.reward-money{color:var(--amber);display:inline-block;border:1px solid #66513a;background:#251e15a0;padding:12px 18px;margin:12px 0 25px}.reward-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-bottom:24px}.reward-card{background:linear-gradient(145deg,#142c36,#09161e);border:1px solid #39646a;min-height:220px;padding:25px;text-align:left;cursor:pointer}.reward-card:hover{border-color:var(--mint);background:#15312f}.reward-card b{display:block;font-size:22px;margin:20px 0 15px}.reward-card p{font-size:14px;line-height:1.8;color:var(--muted)}.reward-card small,.card-no{font-size:12px;color:var(--amber)}.choice-list{display:grid;gap:12px;margin:25px 0}.choice{display:flex;justify-content:space-between;gap:16px;text-align:left;border:1px solid var(--line);padding:22px;background:#11222c;cursor:pointer}.choice b{font-size:17px}.choice small{display:block;color:var(--muted);margin-top:8px;line-height:1.7}.notice{border:1px solid #36574f;background:#0d2825c9;padding:15px 18px;line-height:1.8;color:#c3e6dd;margin:18px 0}.loadout-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.loadout-card{background:linear-gradient(140deg,#142731,#0a161e);border:1px solid #355663;border-top:3px solid var(--card-color,var(--mint));padding:20px;min-width:0;text-align:left;cursor:pointer}.loadout-card.selected{outline:2px solid var(--mint);background:#183831}.loadout-card.material{outline:2px solid #c09de8;background:#302338}.loadout-card h2{font-size:19px;margin:16px 0}.loadout-card p{color:var(--muted);line-height:1.7;font-size:14px}.loadout-heading{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.loadout-heading b{color:var(--amber)}.card-budget{display:flex;gap:10px;justify-content:space-between;font-size:12px;color:var(--mint);margin-top:18px}.workshop-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:20px 0}.forge-summary{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:18px 0;color:var(--amber)}.forge-foot{color:var(--muted);line-height:1.8;font-size:13px}.help-box{border:1px solid var(--line);padding:25px;background:#0c1d25;line-height:2;color:#acc2cb;margin:25px 0}.help-box b{color:var(--mint)}.run-summary{display:flex;flex-wrap:wrap;gap:35px;padding:25px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:25px 0}.run-summary strong{display:block;color:var(--mint);font-size:30px}.run-summary small{color:var(--muted)}.toast{position:fixed;z-index:80;left:50%;top:25%;transform:translateX(-50%);max-width:min(560px,90vw);background:#123b31f5;border:1px solid var(--mint);padding:13px 20px;font-size:14px;text-align:center;pointer-events:none}.battle-nav{position:fixed;z-index:25;right:24px;top:108px;display:flex;gap:8px}.battle-nav .btn{padding:8px 11px;font-size:12px}.deck-viewer{position:fixed;z-index:40;right:24px;top:150px;width:370px;max-width:94vw;max-height:calc(100dvh - 175px);overflow:auto;background:#091b24f7;border:1px solid #466e79;padding:20px;box-shadow:0 12px 50px #000a}.deck-viewer header{display:flex;justify-content:space-between;gap:12px;align-items:center}.deck-viewer p{color:var(--muted);line-height:1.6;font-size:12px}.deck-viewer>div{padding:12px 0;display:flex;justify-content:space-between;gap:15px;border-top:1px solid var(--line);font-size:13px}.deck-viewer small{color:var(--muted)}
+@media(max-width:950px){.log{display:none}.loadout-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.top{left:16px;right:16px}.stats .kills{display:none}.chip{padding:8px;font-size:11px}.battle-nav{right:16px}.room-summary{align-items:flex-start;flex-direction:column}.door-grid{gap:16px}}
+@media(max-width:600px){.top{top:12px;align-items:flex-start}.brand{gap:10px}.sigil{width:25px;height:25px}.title b{font-size:13px}.title span{font-size:10px;max-width:240px}.stats{position:fixed;top:58px;left:12px;right:12px;gap:6px}.chip{padding:5px 9px}.stats .kills{display:none}.hpbar{top:100px;width:55vw}.enemy-name{font-size:11px}.mode{top:137px;font-size:11px;padding:6px 10px}.battle-nav{top:96px;right:10px;gap:4px;flex-direction:column}.battle-nav .btn{padding:6px 8px;font-size:11px}.deck-viewer{top:155px;right:10px;max-height:calc(100dvh - 175px)}#journey{padding:110px 16px 30px}.modal-wrap,.sector{margin-top:0}.menu-copy{margin-top:7vh}.menu-copy h1{font-size:42px}.intro{font-size:17px}.page-head{flex-wrap:wrap;gap:12px}.page-head .actions{width:100%}.door-grid{grid-template-columns:1fr}.room-door{min-height:165px;padding:22px}.room-door h2,.room-door b{font-size:21px}.room-door p{margin-bottom:0}.reward-grid{grid-template-columns:1fr;gap:12px}.reward-card{min-height:145px;padding:18px}.reward-card b{margin:10px 0;font-size:19px}.reward-card p{margin:10px 0}.loadout-grid{grid-template-columns:1fr}.workshop-actions .btn{flex:1 1 40%;padding:11px 7px}.lead{font-size:14px}.help-box{padding:18px;font-size:13px}.choice{padding:17px}.run-summary{gap:20px}.run-summary strong{font-size:25px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style><style data-source="circuit.css">
+body.planning canvas{cursor:default}.hud{position:fixed;z-index:5;left:50%;bottom:14px;transform:translateX(-50%);width:min(940px,calc(100vw - 36px));display:flex;flex-direction:column;gap:8px;max-height:calc(100dvh - 174px);overflow:auto;scrollbar-width:thin;background:linear-gradient(0deg,#050d13f5,#050d1300)}.area-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 3px;font-size:12px}.area-heading b{font-weight:600;color:#bfd5dc}.area-heading b span{font-weight:400;color:var(--mint);margin-left:8px}.area-heading small{color:#8eaab6;font-size:11px}.card-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.slot{position:relative;isolation:isolate;min-width:0;width:100%;min-height:128px;padding:11px;text-align:left;border:1px solid color-mix(in srgb,var(--card-color) 52%,#25404b);border-bottom:3px solid var(--card-color);background:linear-gradient(150deg,color-mix(in srgb,var(--card-color) 12%,#12212b),#09121bef);cursor:pointer;overflow:hidden;user-select:none}.slot:hover{border-color:var(--card-color);background:linear-gradient(150deg,color-mix(in srgb,var(--card-color) 23%,#12212b),#0c1921)}.slot.selected{outline:2px solid var(--card-color);outline-offset:-3px;background:linear-gradient(155deg,color-mix(in srgb,var(--card-color) 28%,#11212b),#0e1c24)}.slot .card-top{display:flex;align-items:center;justify-content:space-between;gap:5px;color:var(--card-color);font-size:11px}.card-top kbd{color:#8ca5b2;padding:1px 4px;border-color:#5469756b}.slot b{display:block;font-size:16px;line-height:1.45;margin:10px 0 6px;color:#e8f4f4;overflow-wrap:anywhere}.slot p{font-size:12px;line-height:1.5;margin:6px 0;color:#b2c8d1}.slot small{display:block;font-size:10px;color:#8da9b8;line-height:1.5}.slot>*:not(.cooldown-fill){position:relative;z-index:2}.cooldown-fill{position:absolute;bottom:0;left:0;right:0;background:#030a12a6;z-index:1;pointer-events:none}.slot.cooling{border-bottom-color:#4b6873}.candidate-area{border:1px solid #345365;background:#071722db;padding:8px 10px}.candidate-area .area-heading{margin-bottom:5px}.candidate-area .slot{min-height:111px}.candidate-area .slot b{font-size:14px;margin-top:8px}.candidate-area .slot small{font-size:10px}.empty-slot{min-height:128px;background:#0a1922bb;border:1px dashed #375360;color:#678b9a;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:7px;cursor:pointer}.empty-slot:disabled{opacity:.7;cursor:default}.empty-slot span{font-size:23px;font-weight:200}.empty-slot small{font-size:11px}.candidate-area .empty-slot{min-height:111px}.hand-tools{display:flex;justify-content:center;flex-wrap:wrap;align-items:center;gap:7px;background:#091923ef;border:1px solid #355563;padding:9px 10px}.hand-tools .btn{font-size:12px;padding:8px 12px}.hand-tools p{width:100%;margin:2px 0 0;text-align:center;font-size:11px;line-height:1.5;color:#aec5ce}.hand-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#07151cee;padding:8px 10px;border:1px solid var(--line)}.hand-footer>span{font-size:11px;color:#99b4c1}.hand-actions{display:flex;gap:8px}.hand-actions .btn{font-size:12px;padding:8px 13px}.hand-actions kbd{margin-left:8px}.pause-toggle{border-color:var(--mint);color:var(--mint)}#circuit-budget{position:fixed;left:24px;top:155px;z-index:4;width:150px;border:1px solid #37565b;background:#08151deb;padding:18px;text-align:left}#circuit-budget>small{display:block;color:#8bb0b8;font-size:11px;line-height:1.7}#circuit-budget>strong{display:block;font-size:38px;color:var(--mint);font-weight:500;line-height:1.35}#circuit-budget>b{font-size:12px;font-weight:400;color:#b5cdd2}#circuit-budget p{font-size:11px;color:#91b2bc;line-height:1.9;border-top:1px solid var(--line);padding-top:10px;margin:12px 0}#circuit-budget em{color:var(--mint);font-style:normal}
+@media(max-width:1250px){#circuit-budget{width:128px;left:16px;top:150px;padding:13px}#circuit-budget strong{font-size:30px}.hud{width:min(850px,calc(100vw - 32px))}}
+@media(max-width:950px){#circuit-budget{display:none}.hud{width:calc(100vw - 24px);bottom:10px}.slot{padding:9px}.slot b{font-size:14px}.slot p{font-size:11px}.area-heading small{font-size:10px}.card-grid{gap:6px}}
+@media(max-width:600px){.hud{width:calc(100vw - 12px);bottom:6px;gap:5px;max-height:calc(100dvh - 177px)}.candidate-area{padding:5px}.card-grid{gap:4px}.slot{padding:6px 5px;min-height:126px}.slot b{font-size:12px;margin:7px 0;line-height:1.45}.slot p{font-size:10px;line-height:1.5;margin:4px 0}.slot small{display:none}.slot .card-top{font-size:9px;flex-wrap:wrap;gap:1px}.card-top kbd{font-size:9px}.candidate-area .slot{min-height:108px;padding:5px}.candidate-area .slot b{font-size:11px;margin:6px 0}.candidate-area .slot small{display:none}.candidate-area .empty-slot{min-height:108px}.empty-slot{min-height:126px}.empty-slot small{font-size:9px}.area-heading{font-size:11px;gap:4px;padding:3px 2px}.area-heading small{font-size:9px;max-width:59%;text-align:right;line-height:1.5}.area-heading b span{margin-left:3px}.hand-tools{gap:4px;padding:6px}.hand-tools .btn{font-size:11px;padding:7px 6px}.hand-tools p{font-size:10px}.hand-footer{gap:5px;padding:5px}.hand-footer>span{font-size:9px;line-height:1.5;max-width:48%}.hand-actions{gap:4px}.hand-actions .btn{font-size:11px;padding:8px 6px}.hand-actions kbd{display:none}.toast{top:23%;font-size:12px}.slot.selected{outline-offset:-2px}}
+@media(max-height:700px) and (min-width:601px){.hud{gap:5px;bottom:8px}.slot{min-height:109px;padding:8px}.slot b{margin:5px 0;font-size:14px}.slot small{display:none}.candidate-area .slot,.candidate-area .empty-slot{min-height:86px}.empty-slot{min-height:109px}.candidate-area .slot b{margin:4px 0}.slot p{font-size:11px}.hand-tools{padding:6px}.candidate-area{padding:5px 8px}}
+
+</style>
+</head>
+<body>
+<canvas id="game" aria-label="等距视角地下城战场，点击地面移动"></canvas>
+<header class="top"><div class="brand"><div class="sigil"><i></i></div><div class="title"><b>回路地牢</b><span>战术白盒 / 十房探索</span></div></div><div class="stats"><div class="chip">生命 <strong id="life">100</strong></div><div class="chip">回路 <strong id="circuit">100</strong></div><div class="chip currency">金币 <strong id="coins">0</strong></div><div class="chip kills">击破 <strong id="kills">0</strong></div></div></header>
+<div class="hpbar"><div class="enemy-name">房间战斗</div><div class="bar"><i id="bossbar"></i></div></div>
+<aside class="log"><h3>战术记录</h3><div id="log1">自由时停 · 整备手牌</div><div id="log2">点击地面移动</div><div id="log3">Q W E R T / 1—5 选牌</div></aside>
+<div class="mode" id="mode"></div><div class="hud" id="hud"></div>
+<script data-source="deck-core.js">
+(function(root){
+ 'use strict';
+ const kinds=[
+  {id:'attack',name:'攻击牌',description:'前方攻击，造成 24 点伤害',cd:2.5,color:'#f3a35d'},
+  {id:'defense',name:'防御牌',description:'获得 20 点护盾',cd:6,color:'#6ebbd1'},
+  {id:'move',name:'位移牌',description:'向目标方向位移 4 格',cd:4,color:'#b8cc78'},
+  {id:'single',name:'一次性卡牌',description:'造成 60 点伤害，使用后本场耗尽',cd:6,color:'#df83a7'},
+  {id:'debuff',name:'debuff牌',description:'使目标减速 50%，持续 3 秒',cd:5,color:'#b09ddd'}
+ ];
+ const labels={attack:'攻击',defense:'防御',move:'位移',single:'一次性',debuff:'debuff'};
+ const limit=5;
+ function effects(card){
+  const input=Array.isArray(card.traits)?card.traits:[card.kind];
+  const traits=kinds.filter(k=>input.includes(k.id)).map(k=>k.id);
+  return traits.length?traits:[kinds.some(k=>k.id===card.kind)?card.kind:'attack'];
+ }
+ function spec(card){
+  const traits=effects(card),level=Math.min(2,Math.max(0,Math.floor(Number(card.level)||0))),scale=1+.25*level;
+  const baseName=traits.length===1?kinds.find(k=>k.id===traits[0]).name:traits.map(t=>labels[t]).join('·')+'牌';
+  const has=t=>traits.includes(t);
+  return {...card,kind:has(card.kind)?card.kind:traits[0],traits,spliced:Boolean(card.spliced||traits.length>1),level,
+   name:baseName+(level?' +'+level:''),baseName,cd:Math.max(...kinds.filter(k=>has(k.id)).map(k=>k.cd)),
+   damage:((has('attack')?24:0)+(has('single')?60:0))*scale,shield:(has('defense')?20:0)*scale,
+   distance:(has('move')?4:0)*scale,slowDuration:(has('debuff')?3:0)*scale,slowRatio:has('debuff')?.5:0,
+   exhaust:has('single'),cooldown:Math.max(0,Number(card.cooldown)||0)};
+ }
+ function defaults(){return kinds.flatMap((k,i)=>[0,1].map(n=>({id:'card-'+(i*2+n),kind:k.id,traits:[k.id],spliced:false,level:0})));}
+ function shuffle(cards,rng=Math.random){
+  const result=[...cards];
+  for(let i=result.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[result[i],result[j]]=[result[j],result[i]];}
+  return result;
+ }
+ function create(cards=defaults(),rng=Math.random,opening=false){
+  const d={hand:[],candidates:[],draw:shuffle(cards.map(c=>spec({...c,level:0,cooldown:0})),rng),discard:[],exhausted:[],rng};
+  if(opening)for(const kind of kinds){const index=d.draw.findIndex(c=>c.kind===kind.id);if(index>=0)d.hand.push(d.draw.splice(index,1)[0]);}
+  while(d.hand.length<limit&&d.draw.length)d.hand.push(d.draw.pop());
+  return d;
+ }
+ function indexIn(cards,index){return Number.isInteger(index)&&index>=0&&index<cards.length;}
+ function drawOne(d,replaceIndex=-1){
+  const replacing=d.candidates.length>=limit;
+  if(replacing&&!indexIn(d.candidates,replaceIndex))return false;
+  if(!d.draw.length&&!d.discard.length){
+   // When every live card is already in a row, the selected candidate is the only recyclable card.
+   if(!replacing)return false;
+   return d.candidates[replaceIndex];
+  }
+  if(!d.draw.length){d.draw=shuffle(d.discard,d.rng);d.discard=[];}
+  const card=d.draw.pop();
+  if(replacing){d.discard.push(d.candidates[replaceIndex]);d.candidates[replaceIndex]=card;}
+  else d.candidates.push(card);
+  return card;
+ }
+ function exchange(d,handIndex,candidateIndex){
+  if(!Number.isInteger(handIndex)||handIndex<0||handIndex>=limit||handIndex>d.hand.length||!indexIn(d.candidates,candidateIndex))return false;
+  const card=d.candidates[candidateIndex];
+  if(handIndex===d.hand.length){d.hand.push(card);d.candidates.splice(candidateIndex,1);}
+  else{d.candidates[candidateIndex]=d.hand[handIndex];d.hand[handIndex]=card;}
+  return card;
+ }
+ function fusionRule(d,handIndex,candidateIndex){
+  if(!indexIn(d.hand,handIndex)||!indexIn(d.candidates,candidateIndex))return{ok:false,reason:'请选择一张手牌和一张候选牌'};
+  const primary=spec(d.hand[handIndex]),material=spec(d.candidates[candidateIndex]);
+  if(primary.level>=2)return{ok:false,reason:'主牌已达本场融合上限 +2'};
+  if(primary.baseName!==material.baseName)return{ok:false,reason:'只能融合同名手牌与候选牌'};
+  return{ok:true};
+ }
+ function fuse(d,handIndex,candidateIndex){
+  if(!fusionRule(d,handIndex,candidateIndex).ok)return false;
+  const primary=d.hand[handIndex];
+  Object.assign(primary,spec({...primary,level:(primary.level||0)+1}));
+  d.exhausted.push(d.candidates.splice(candidateIndex,1)[0]);
+  return primary;
+ }
+ function use(d,index,mode='instant'){
+  if(mode!=='instant'||!indexIn(d.hand,index))return false;
+  const card=d.hand[index],current=spec(card);
+  if(current.cooldown>1e-8)return false;
+  card.cooldown=current.cd;
+  if(current.exhaust)d.exhausted.push(d.hand.splice(index,1)[0]);
+  return true;
+ }
+ function tick(d,dt){
+  const elapsed=Math.max(0,Number(dt)||0);
+  for(const card of [...d.hand,...d.candidates,...d.draw,...d.discard])card.cooldown=Math.max(0,(Number(card.cooldown)||0)-elapsed);
+ }
+ const api={kinds,effects,spec,defaults,shuffle,create,drawOne,exchange,fusionRule,fuse,use,tick};
+ if(typeof module!=='undefined')module.exports=api;else root.Deck=api;
+})(typeof window==='undefined'?{}:window);
+
+</script><script data-source="circuit-core.js">
+(function(root){
+ 'use strict';
+ const cores=[{id:'offense',n:'进攻',d:'伤害收益 +20%，击败额外 +5'},
+ {id:'roam',n:'游走',d:'有效躲避每次 +35'},
+ {id:'guard',n:'守御',d:'实际护盾吸收每点 +1'},
+ {id:'control',n:'截断',d:'打断攻击每次 +16'}];
+ function create(core='offense'){return{core,stock:100,active:false};}
+ function allocate(s){if(s.active)return false;s.active=true;return true;}
+ function opening(s){return allocate(s);}
+ function finish(s){s.active=false;}
+ function gain(s,source,amount=1){
+  let value=0;
+  if(source==='damage')value=Math.max(0,amount)*.15*(s.core==='offense'?1.2:1);
+  if(source==='kill')value=s.core==='offense'?15:10;
+  if(source==='dodge')value=s.core==='roam'?35:25;
+  if(source==='shield')value=Math.max(0,amount)*(s.core==='guard'?1:.5);
+  if(source==='interrupt')value=s.core==='control'?16:8;
+  s.stock+=value;return value;
+ }
+ const api={cores,create,allocate,opening,finish,gain};
+ if(typeof module!=='undefined')module.exports=api;else root.Circuit=api;
+})(typeof window==='undefined'?{}:window);
+
+</script><script data-source="battle-core.js">
+(function(root,factory){
+ const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.Battle=api;
+})(typeof globalThis!=='undefined'?globalThis:this,function(){
+ 'use strict';
+ const STEP=.5,EPS=1e-9;
+ const distance=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+ function shape(t,origin,aim,scale=1){
+  const angle=typeof aim==='number'?aim:Math.atan2((aim?.y??origin.y)-origin.y,(aim?.x??origin.x+1)-origin.x);
+  const s={type:['sector','line','circle','dash','circle'][t],origin:{...origin},angle};
+  if(t===0){s.radius=2.4*scale;s.halfAngle=50*Math.PI/180;}
+  if(t===1||t===3){s.length=(t===1?7:4)*scale;s.width=1.2*scale;}
+  if(t===2||t===4)s.radius=(t===2?2.8:1)*scale;
+  if(t===3)s.landing={x:origin.x+Math.cos(angle)*s.length,y:origin.y+Math.sin(angle)*s.length,radius:scale};
+  if(s.length){const c=Math.cos(angle),n=Math.sin(angle),w=s.width/2;s.points=[{x:origin.x-n*w,y:origin.y+c*w},{x:origin.x+c*s.length-n*w,y:origin.y+n*s.length+c*w},{x:origin.x+c*s.length+n*w,y:origin.y+n*s.length-c*w},{x:origin.x+n*w,y:origin.y-c*w}];}
+  return s;
+ }
+ function contains(s,p){
+  const dx=p.x-s.origin.x,dy=p.y-s.origin.y;
+  if(s.type==='circle')return Math.hypot(dx,dy)<=s.radius+EPS;
+  if(s.type==='sector'){if(Math.hypot(dx,dy)<=EPS)return true;const delta=Math.atan2(Math.sin(Math.atan2(dy,dx)-s.angle),Math.cos(Math.atan2(dy,dx)-s.angle));return Math.hypot(dx,dy)<=s.radius+EPS&&Math.abs(delta)<=s.halfAngle+EPS;}
+  const forward=dx*Math.cos(s.angle)+dy*Math.sin(s.angle),side=-dx*Math.sin(s.angle)+dy*Math.cos(s.angle);
+  const inLine=forward>=-EPS&&forward<=s.length+EPS&&Math.abs(side)<=s.width/2+EPS;
+  return inLine||(s.type==='dash'&&distance(s.landing,p)<=s.landing.radius+EPS);
+ }
+ function create(){return {barrels:[{x:-2,y:0,hp:20},{x:3,y:1,hp:20}],oil:[]};}
+ function addOil(state,x,y,radius){
+  let added=0;const existing=new Set(state.oil.map(p=>p.x+','+p.y));
+  for(let ix=Math.ceil((x-radius)/STEP);ix<=Math.floor((x+radius)/STEP);ix++)for(let iy=Math.ceil((y-radius)/STEP);iy<=Math.floor((y+radius)/STEP);iy++){
+   const p={x:ix*STEP,y:iy*STEP,burning:false,remaining:0},key=p.x+','+p.y;
+   if(distance(p,{x,y})<=radius+EPS&&!existing.has(key)){state.oil.push(p);existing.add(key);added++;}
+  }
+  spread(state,state.oil.filter(p=>p.burning&&p.remaining>0));return added;
+ }
+ function spread(state,seeds){
+  const queue=[...seeds];const seen=new Set(queue);let lit=0;
+  for(let i=0;i<queue.length;i++){
+   const p=queue[i];if(!p.burning){p.burning=true;p.remaining=5;lit++;}
+   for(const next of state.oil)if(!seen.has(next)&&distance(p,next)<=STEP*Math.SQRT2+EPS){seen.add(next);queue.push(next);}
+  }
+  return lit;
+ }
+ function ignite(state,s){return spread(state,state.oil.filter(p=>contains(s,p)));}
+ function damageBarrels(state,s,damage,fire=false){
+  const broken=[];for(const b of state.barrels)if(b.hp>0&&contains(s,b)){
+   b.hp=Math.max(0,b.hp-damage);if(b.hp===0){addOil(state,b.x,b.y,1.5);broken.push(b);}
+  }
+  if(fire)ignite(state,s);return broken;
+ }
+ function blocked(state,x,y){return state.barrels.some(b=>b.hp>0&&distance(b,{x,y})<=.5);}
+ function burn(actor,dps=5){actor.burnRemaining=Math.max(actor.burnRemaining||0,5);actor.burnDps=dps;}
+ function touches(actor,p){return Math.abs(actor.x-p.x)<=STEP/2+EPS&&Math.abs(actor.y-p.y)<=STEP/2+EPS;}
+ function tick(state,dt,actors=[]){
+  dt=Math.max(0,dt);const hits=[];
+  const seeds=state.oil.filter(p=>p.burning&&p.remaining>0);
+  for(const actor of actors)if(actor.hp>0&&actor.burnRemaining>0)for(const p of state.oil)if(touches(actor,p))seeds.push(p);
+  spread(state,seeds);
+  for(const actor of actors){
+   let damage=Math.min(dt,actor.burnRemaining||0)*(actor.burnDps||5);
+   for(const p of state.oil)if(p.burning&&touches(actor,p))damage=Math.max(damage,Math.min(dt,p.remaining)*5);
+   if(damage>0){actor.hp=Math.max(0,actor.hp-damage);hits.push({actor,damage});}
+   actor.burnRemaining=Math.max(0,(actor.burnRemaining||0)-dt);
+  }
+  for(const p of state.oil)if(p.burning)p.remaining=Math.max(0,p.remaining-dt);
+  state.oil=state.oil.filter(p=>!p.burning||p.remaining>EPS);return hits;
+ }
+ return {shape,contains,create,addOil,ignite,damageBarrels,blocked,burn,tick};
+});
+
+</script><script data-source="combat-core.js">
+(function(root){
+ 'use strict';
+ const B=typeof module!=='undefined'?require('./battle-core.js'):root.Battle;
+ let serial=0;
+ const types={melee:{hp:60,damage:6,windup:.7,recovery:.8,range:1.7,speed:1.35},ranged:{hp:60,damage:8,windup:.9,recovery:1,range:7,speed:.85},guard:{hp:100,damage:10,windup:1,recovery:1.2,range:3,speed:1.0}};
+ function enemy(type,x,y,hp){const t=types[type];return{type,x,y,hp:hp??t.hp,max:hp??t.hp,freeze:0,recover:.3,attack:null,turn:0,dead:false,burnRemaining:0};}
+ function damage(m,amount){const actual=Math.min(Math.max(0,m.hp),Math.max(0,amount));m.hp=Math.max(0,m.hp-actual);return{damage:actual,killed:actual>0&&m.hp===0};}
+ function receive(h,amount){const absorbed=Math.min(h.shield||0,amount);h.shield=Math.max(0,(h.shield||0)-absorbed);const actual=Math.min(h.hp,Math.max(0,amount-absorbed));h.hp-=actual;return{absorbed,damage:actual};}
+ function begin(m,h){
+  if(m.hp<=0||m.attack||m.freeze>0)return false;const t=types[m.type];let shape;
+  if(m.type==='ranged'||m.type==='guard'&&m.turn%2===1){shape=B.shape(1,m,h);shape.length=m.type==='ranged'?7:6;shape.width=m.type==='ranged'?1.1:1.5;}
+  else shape={type:'circle',origin:{x:h.x,y:h.y},radius:m.type==='guard'?2:1.05};
+  m.attack={id:++serial,shape,remaining:t.windup,windup:t.windup,threatened:B.contains(shape,h)};m.turn++;return true;
+ }
+ function interrupt(m){if(!m.attack||m.hp<=0)return false;m.attack=null;m.recover=types[m.type].recovery;return true;}
+ function step(m,h,dt){
+  if(m.hp<=0||m.freeze>0)return[];
+  if(!m.attack){m.recover=Math.max(0,m.recover-dt);return[];}
+  const a=m.attack;if(B.contains(a.shape,h))a.threatened=true;a.remaining-=dt;if(a.remaining>0)return[];
+  m.attack=null;m.recover=types[m.type].recovery;
+  if(B.contains(a.shape,h))return[{type:'hit',damage:types[m.type].damage,shape:a.shape,id:a.id}];
+  return a.threatened?[{type:'dodge',shape:a.shape,id:a.id}]:[];
+ }
+ const api={types,enemy,damage,receive,begin,interrupt,step};
+ if(typeof module!=='undefined')module.exports=api;else root.Combat=api;
+})(typeof window==='undefined'?{}:window);
+
+</script><script data-source="hand-core.js">
+(function(root){
+ 'use strict';
+ const D=typeof module!=='undefined'?require('./deck-core.js'):root.Deck;
+ const costs=Object.freeze({draw:20,fuse:20,exchange:0});
+ const labels={draw:'抽牌',fuse:'融合',exchange:'交换'};
+ function validIndex(cards,index){return Number.isInteger(index)&&index>=0&&index<cards.length;}
+ function check(circuit,d,type,handIndex,candidateIndex){
+  if(!circuit||!circuit.active)return{ok:false,reason:'请先进入时停'};
+  if(!Object.prototype.hasOwnProperty.call(costs,type))return{ok:false,reason:'未知的手牌操作'};
+  if(type==='draw'){
+   const full=d.candidates.length>=5;
+   if(full&&!validIndex(d.candidates,candidateIndex))return{ok:false,reason:'候选牌已满 5 张，请选择要替换的候选牌'};
+   if(!d.draw.length&&!d.discard.length&&!full)return{ok:false,reason:'牌堆已空，无法抽牌'};
+  }
+  if(type==='exchange'&&(!Number.isInteger(handIndex)||handIndex<0||handIndex>=5||handIndex>d.hand.length||!validIndex(d.candidates,candidateIndex)))return{ok:false,reason:'请选择手牌位置和候选牌进行交换'};
+  if(type==='fuse'){const rule=D.fusionRule(d,handIndex,candidateIndex);if(!rule.ok)return rule;}
+  if(!Number.isFinite(circuit.stock)||circuit.stock<costs[type])return{ok:false,reason:'回路不足：'+labels[type]+'需要 '+costs[type]};
+  return{ok:true};
+ }
+ function act(circuit,d,type,handIndex,candidateIndex){
+  const valid=check(circuit,d,type,handIndex,candidateIndex);if(!valid.ok)return valid;
+  const card=type==='draw'?D.drawOne(d,candidateIndex):type==='exchange'?D.exchange(d,handIndex,candidateIndex):D.fuse(d,handIndex,candidateIndex);
+  if(!card)return{ok:false,reason:'当前牌区无法完成该操作'};
+  const action={type,cost:costs[type],name:card.name};
+  circuit.stock-=action.cost;
+  return{ok:true,card,action};
+ }
+ const api={costs,labels,check,act};
+ if(typeof module!=='undefined')module.exports=api;else root.HandPause=api;
+})(typeof window==='undefined'?{}:window);
+
+</script><script data-source="campaign-core.js">
+(function(root){
+ 'use strict';
+ const D=typeof module!=='undefined'?require('./deck-core.js'):root.Deck;
+ const names={combat:['巡逻回廊','锈蚀通道','断电大厅','重装哨站'],event:['静默终端','失落档案','残响大厅'],rest:['微光营地','回路驿站','静默庇护所']};
+ const kindIds=()=>D.kinds.map(k=>k.id);
+ const randomIndex=(r,length)=>Math.min(length-1,Math.max(0,Math.floor(r.rng()*length)));
+ function shuffled(r,items){const result=items.slice();for(let i=result.length-1;i>0;i--){const j=randomIndex(r,i+1);[result[i],result[j]]=[result[j],result[i]];}return result;}
+ function createRun(rng=Math.random){return {version:4,loadout:D.defaults(),coins:0,hp:100,pending:null,current:null,path:[],reward:null,won:false,remaining:{combat:5,event:3,rest:2},core:'offense',rng,doors:null,nextCardId:1};}
+ function available(r){
+  if(!r||r.pending||r.won||r.path.length>=10)return [];
+  if(r.doors)return r.doors;
+  const number=r.path.length+1;
+  const eligible=number===1||number===10?['combat']:['combat','event','rest'].filter(type=>r.remaining[type]>(type==='combat'?1:0));
+  r.doors=shuffled(r,eligible).slice(0,2).map(type=>Object.freeze({id:'room-'+number+'-'+type,type,name:number===10?'守门构装体':names[type][randomIndex(r,names[type].length)],number,...(number===10?{boss:true}:{})}));
+  return r.doors;
+ }
+ function enter(r,id){
+  if(!r||!validDeck(r.loadout))return false;
+  const room=available(r).find(n=>n.id===id);if(!room||r.remaining[room.type]<=0)return false;
+  r.remaining[room.type]--;r.pending=room;r.doors=null;return true;
+ }
+ function finish(r){
+  const room=r.pending;if(!room)return false;
+  r.path.push(room);r.current=room;r.pending=null;r.reward=null;r.doors=null;r.won=r.path.length===10;return true;
+ }
+ function uniqueId(r,prefix='card'){
+  let id;do{id=prefix+'-'+r.nextCardId++;}while(r.loadout.some(c=>c.id===id)||r.reward?.some(c=>c.id===id));return id;
+ }
+ const baseCard=(id,kind)=>({id,kind,traits:[kind],spliced:false,level:0});
+ function win(r,hp){
+  if(!r||r.pending?.type!=='combat'||r.reward||!Number.isFinite(hp)||hp<=0)return false;
+  r.hp=Math.min(100,hp);r.coins+=30;r.reward=shuffled(r,kindIds()).slice(0,3).map(kind=>baseCard(uniqueId(r,'reward'),kind));return true;
+ }
+ function claim(r,id){
+  if(!r||r.pending?.type!=='combat'||!r.reward)return false;
+  const offered=r.reward.find(c=>c.id===id);if(!offered)return false;
+  r.loadout.push(baseCard(uniqueId(r),offered.kind));return finish(r);
+ }
+ function rest(r){if(!r||r.pending?.type!=='rest')return false;r.hp=Math.min(100,r.hp+35);return finish(r);}
+ function event(r,choice){return !!(r&&r.pending?.type==='event'&&choice==='continue'&&finish(r));}
+ function validDeck(cards){
+  if(!Array.isArray(cards)||cards.length<5)return false;
+  const ids=new Set(),base=kindIds();return cards.every(c=>{
+   if(!c||typeof c.id!=='string'||!c.id||ids.has(c.id)||!Number.isInteger(c.level)||c.level<0||c.level>2||!Array.isArray(c.traits)||!c.traits.every(t=>base.includes(t)))return false;
+   ids.add(c.id);
+   if(c.kind==='splice')return c.spliced===true&&c.traits.length===2;
+   return base.includes(c.kind)&&c.spliced===false&&c.traits.length===1&&c.traits[0]===c.kind;
+  });
+ }
+ function canManage(r){return !!(r&&r.path.length>0&&r.pending===null&&r.reward===null);}
+ const fail=reason=>({ok:false,reason,card:null});
+ function workshopRule(r,cost){
+  if(!canManage(r))return fail('房间完成后才能管理牌组');
+  if(!validDeck(r.loadout))return fail('牌组至少需要 5 张有效卡牌');
+  if(!Number.isFinite(r.coins)||r.coins<cost)return fail('晶币不足，需要 '+cost+' 晶币');
+  return {ok:true,reason:'',card:null};
+ }
+ function transform(r,index){
+  const rule=workshopRule(r,30);if(!rule.ok)return rule;
+  if(!Number.isInteger(index)||!r.loadout[index])return fail('请选择一张卡牌');
+  const current=r.loadout[index],choices=kindIds().filter(kind=>kind!==current.kind),card=baseCard(current.id,choices[randomIndex(r,choices.length)]);
+  r.loadout[index]=card;r.coins-=30;return {ok:true,reason:'',card};
+ }
+ function spliceRule(r,first,second){
+  const rule=workshopRule(r,50);if(!rule.ok)return rule;
+  if(!Number.isInteger(first)||!Number.isInteger(second)||first===second||!r.loadout[first]||!r.loadout[second])return fail('请选择两张不同的卡牌');
+  if(r.loadout.length<6)return fail('拼接后牌组必须保留至少 5 张卡牌');
+  const a=r.loadout[first],b=r.loadout[second];
+  if(a.spliced||b.spliced||a.kind==='splice'||b.kind==='splice')return fail('拼接产物不能再次拼接');
+  if(a.kind===b.kind)return fail('拼接需要两种不同的基础类型');
+  return {ok:true,reason:'',card:null};
+ }
+ function splice(r,first,second){
+  const rule=spliceRule(r,first,second);if(!rule.ok)return rule;
+  const a=r.loadout[first],b=r.loadout[second],card={id:uniqueId(r),kind:'splice',traits:[a.traits[randomIndex(r,a.traits.length)],b.traits[randomIndex(r,b.traits.length)]],spliced:true,level:0};
+  r.loadout=r.loadout.filter((_,i)=>i!==first&&i!==second);r.loadout.splice(Math.min(first,second),0,card);r.coins-=50;
+  return {ok:true,reason:'',card};
+ }
+ const api={createRun,available,enter,win,claim,rest,event,validDeck,canManage,transform,spliceRule,splice};
+ if(typeof module!=='undefined')module.exports=api;else root.Campaign=api;
+})(typeof window==='undefined'?{}:window);
+
+</script><script data-source="game.js">
+'use strict';
+const C=document.querySelector('#game'),X=C.getContext('2d');
+const hero={x:0,y:3,hp:100,shield:0,shieldRemaining:0,burnRemaining:0,target:null};
+let screen='menu',run=null,deck=null,skills=[],enemies=[],battlefield=null,circuit=Circuit.create();
+let slow=false,planning=null,selectedIndex=-1,materialIndex=-1,aimPoint={x:2,y:-2};
+let time=0,kills=0,castLock=0,coverage=[],hudSignature='';
+const overlay=document.createElement('main');overlay.id='journey';document.body.append(overlay);
+const auxiliary=document.createElement('div');auxiliary.id='auxiliary';document.body.append(auxiliary);
+const toastEl=document.createElement('div');toastEl.className='toast';toastEl.setAttribute('role','status');toastEl.hidden=true;document.body.append(toastEl);let toastTimer;
+const budgetEl=document.createElement('aside');budgetEl.id='circuit-budget';budgetEl.setAttribute('aria-label','回路与时停规则');document.body.append(budgetEl);
+function toast(text){toastEl.textContent=text;toastEl.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.hidden=true,3200);}
+function log(text){document.querySelector('#log3').textContent=document.querySelector('#log2').textContent;document.querySelector('#log2').textContent=document.querySelector('#log1').textContent;document.querySelector('#log1').textContent=text;}
+function color(card){return Deck.kinds.find(k=>k.id===Deck.effects(card)[0])?.color||'#5ef2d6';}
+function clearSelection(){selectedIndex=-1;materialIndex=-1;hudSignature='';}
+function setScreen(next){
+ if(typeof deckViewerOpen!=='undefined')deckViewerOpen=false;
+ screen=next;clearSelection();document.body.dataset.screen=next;overlay.hidden=next==='battle';auxiliary.innerHTML='';updateUI();
+ document.querySelector('.title span').textContent=run?.pending?'ROOM '+String(run.pending.number).padStart(2,'0')+' / 10 · '+run.pending.name:next==='build'?'房间整备 / 牌组工坊':'战术白盒 / 十房探索';overlay.scrollTop=0;
+}
+function resetBattle(){slow=false;planning=null;hero.target=null;castLock=0;clearSelection();coverage=[];circuit=Circuit.create(run?.core||'offense');}
+function startBattle(){
+ if(!run?.pending||run.pending.type!=='combat'||!Campaign.validDeck(run.loadout))return false;
+ const n=run.pending;resetBattle();deck=Deck.create(run.loadout,Math.random,run.path.length===0);skills=deck.hand;
+ Object.assign(hero,{x:0,y:3,hp:run.hp,shield:0,shieldRemaining:0,burnRemaining:0,target:null});
+ enemies=[Combat.enemy('guard',2,-2,n.boss?240:100)];if(!n.boss)enemies.push(Combat.enemy('melee',-4,-2),Combat.enemy('ranged',5,3));
+ battlefield=Battle.create();time=0;kills=0;aimPoint={x:2,y:-2};setScreen('battle');battleNav();enterPause(true);
+ document.querySelector('#bossbar').style.width='100%';document.querySelector('.enemy-name').textContent=n.name+' · 清除所有敌人';log('开场时停 · 100 回路 · 5 张手牌');return true;
+}
+function enterPause(opening=false){
+ if(screen!=='battle'||slow||hero.hp<=0)return false;
+ if(!(opening?Circuit.opening(circuit):Circuit.allocate(circuit)))return false;
+ slow=true;planning=circuit;hero.target=null;clearSelection();updateUI();log(opening?'开场时停 · 世界与冷却冻结':'已时停 · 手牌、抽牌区与回路保留');return true;
+}
+function endPlan(){
+ if(screen!=='battle'||!slow)return false;
+ if(typeof deckViewerOpen!=='undefined'&&deckViewerOpen)closeBuild();
+ slow=false;planning=null;hero.target=null;clearSelection();Circuit.finish(circuit);updateUI();log('战斗继续 · 保留 '+Math.floor(circuit.stock)+' 回路');return true;
+}
+function slot(i){
+ if(screen!=='battle'||i<0||i>4)return;
+ if(!skills[i]){if(slow&&i===skills.length){selectedIndex=i;updateUI();}return;}
+ if(!slow&&selectedIndex===i){confirmSelected();return;}
+ selectedIndex=selectedIndex===i?-1:i;hudSignature='';updateUI();
+}
+function candidateSlot(i){if(screen!=='battle'||!slow||!deck.candidates[i])return;materialIndex=materialIndex===i?-1:i;hudSignature='';updateUI();}
+function confirmSelected(){return screen==='battle'&&!slow&&selectedIndex>=0?cast(selectedIndex):false;}
+function selectedHand(){return selectedIndex<0&&skills.length<5?skills.length:selectedIndex;}
+function handAction(type){
+ if(screen!=='battle'||!slow)return false;
+ const result=HandPause.act(circuit,deck,type,selectedHand(),materialIndex);
+ if(!result.ok){toast(result.reason);return false;}
+ if(typeof deckViewerOpen!=='undefined'&&deckViewerOpen)closeBuild();
+ skills=deck.hand;clearSelection();log((HandPause.labels[type]||type)+(result.action.cost?' −'+result.action.cost+' 回路':' · 免费')+' · '+result.card.name);updateUI();return true;
+}
+function grant(source,amount=1){const value=Circuit.gain(circuit,source,amount);if(source!=='damage'&&value>0){const names={kill:'击败',dodge:'躲避',shield:'护盾吸收',interrupt:'打断'};log(names[source]+' · 回路 +'+value.toFixed(1));}return value;}
+function hitEnemy(m,amount){const result=Combat.damage(m,amount);if(result.damage)grant('damage',result.damage);if(result.killed&&!m.dead){m.dead=true;m.attack=null;kills++;grant('kill');}return result;}
+function cast(i,mode='instant'){
+ if(screen!=='battle'||slow||mode!=='instant'||!skills[i]||castLock>0)return false;
+ const card=skills[i];if(!Deck.use(deck,i)){toast('技能冷却中 · '+card.cooldown.toFixed(1)+' 秒');return false;}
+ const effectShapes=Deck.effects(card).map(trait=>({trait,shape:shapeForTrait(card,trait)}));clearSelection();castLock=.22;
+ for(const {trait,shape} of effectShapes){
+  if(trait==='defense'){hero.shield=Math.max(hero.shield,card.shield);hero.shieldRemaining=4;}
+  if(trait==='attack'||trait==='single'){
+   const amount=(trait==='attack'?24:60)*(1+.25*card.level);
+   for(const m of enemies.filter(m=>m.hp>0&&Battle.contains(shape,m)))hitEnemy(m,amount);
+   Battle.damageBarrels(battlefield,shape,amount);
+  }
+  if(trait==='debuff')for(const m of enemies.filter(m=>m.hp>0&&Battle.contains(shape,m))){m.slowRemaining=Math.max(m.slowRemaining||0,card.slowDuration);m.slowRatio=card.slowRatio;}
+  coverage.push({shape,color:color(card),remaining:.5});
+ }
+ const dash=effectShapes.find(e=>e.trait==='move');if(dash){hero.x=dash.shape.landing.x;hero.y=dash.shape.landing.y;hero.target=null;}
+ skills=deck.hand;log('施放 '+card.name+(card.exhaust?' · 本场耗尽':''));updateUI();checkBattle();return true;
+}
+function checkBattle(){if(screen!=='battle')return;if(hero.hp<=0){defeat();return;}const guard=enemies[0];document.querySelector('#bossbar').style.width=(guard?Math.max(0,guard.hp/guard.max*100):0)+'%';if(!enemies.some(m=>m.hp>0))battleWon();}
+function advanceMovement(actor,dt,speed=4){
+ if(!actor.target)return;const dx=actor.target.x-actor.x,dy=actor.target.y-actor.y,d=Math.hypot(dx,dy);if(d<.03){actor.target=null;return;}
+ const amount=Math.min(d,dt*speed),before={x:actor.x,y:actor.y};moveActor(actor,actor.x+dx/d*amount,actor.y+dy/d*amount);if(Math.hypot(actor.x-before.x,actor.y-before.y)<.001||amount===d)actor.target=null;
+}
+function battleStep(dt=.016){
+ if(screen!=='battle'||!battlefield||slow)return;
+ time+=dt;Deck.tick(deck,dt);castLock=Math.max(0,castLock-dt);advanceMovement(hero,dt);
+ for(const m of enemies){
+  if(m.hp<=0)continue;if(m.freeze>0){m.freeze=Math.max(0,m.freeze-dt);continue;}
+  const slowedTime=Math.min(dt,m.slowRemaining||0),enemyDt=dt-slowedTime*(m.slowRatio||0);m.slowRemaining=Math.max(0,(m.slowRemaining||0)-dt);
+  for(const event of Combat.step(m,hero,enemyDt)){
+   coverage.push({shape:event.shape,color:'#ff646b',remaining:.25});
+   if(event.type==='dodge')grant('dodge');else{const result=Combat.receive(hero,event.damage);if(result.absorbed)grant('shield',result.absorbed);if(result.damage)log('受到攻击 · 生命 −'+result.damage);}
+  }
+  if(m.attack||m.recover>0)continue;const distance=Math.hypot(m.x-hero.x,m.y-hero.y),type=Combat.types[m.type];
+  if(distance<=type.range)Combat.begin(m,hero);else if(distance>0)moveActor(m,m.x+(hero.x-m.x)/distance*enemyDt*type.speed,m.y+(hero.y-m.y)/distance*enemyDt*type.speed);
+ }
+ hero.shieldRemaining=Math.max(0,hero.shieldRemaining-dt);if(!hero.shieldRemaining)hero.shield=0;
+ const before=new Map(enemies.map(m=>[m,m.hp]));Battle.tick(battlefield,dt,[hero,...enemies]);
+ for(const m of enemies){const actual=Math.max(0,before.get(m)-m.hp);if(actual)grant('damage',actual);if(m.hp<=0&&!m.dead){m.dead=true;m.attack=null;kills++;grant('kill');}}
+ coverage.forEach(c=>c.remaining-=dt);coverage=coverage.filter(c=>c.remaining>0);checkBattle();updateUI();
+}
+function updateUI(){
+ document.querySelector('#life').textContent=Math.ceil(hero.hp)+(hero.shield>0?' +'+Math.ceil(hero.shield)+'盾':'');document.querySelector('#circuit').textContent=Math.floor(circuit.stock);document.querySelector('#kills').textContent=kills;document.querySelector('#coins').textContent=run?.coins||0;
+ document.body.classList.toggle('planning',slow);const mode=document.querySelector('#mode');mode.classList.toggle('show',screen==='battle'&&slow);mode.textContent=slow?'时停中 · 世界与冷却冻结':'';renderHud();renderBudget();
+ if(typeof deckViewerOpen!=='undefined'&&deckViewerOpen)refreshDeckViewer();
+}
+function cardDescription(c){return Deck.effects(c).map(t=>({attack:'伤害 '+24*(1+.25*c.level),defense:'护盾 '+c.shield,move:'位移 '+c.distance+' 格',single:'伤害 '+60*(1+.25*c.level)+' · 本场一次',debuff:'减速 '+Math.round(c.slowRatio*100)+'% / '+c.slowDuration+'s'}[t])).join(' / ');}
+function cardButton(c,i,area){
+ const selected=area==='hand'?selectedIndex===i:materialIndex===i,attr=area==='hand'?'slot':'candidate';
+ return `<button class="slot ${selected?'selected':''} ${c.cooldown>0?'cooling':'ready'} ${area==='candidate'?'candidate-card':''}" data-${attr}="${i}" aria-label="${area==='hand'?'手牌 '+('QWERT'[i]):'抽牌区 '+(i+1)} ${c.name}" aria-pressed="${selected}" style="--card-color:${color(c)}"><span class="card-top"><span>${c.cooldown>0?c.cooldown.toFixed(1)+'s':'就绪'}${slow?' · 冻结':''}</span><kbd>${area==='hand'?'QWERT'[i]:String(i+1).padStart(2,'0')}</kbd></span><b>${c.name}</b><p>${cardDescription(c)}</p><small>${c.spliced?'拼接牌 · 双词条':c.exhaust?'使用后本场耗尽':'CD '+c.cd+'s · 可重复施放'}${c.level?' · 本场强化':''}</small><span class="cooldown-fill" style="height:${Math.min(100,c.cooldown/c.cd*100)}%"></span></button>`;
+}
+function renderHud(){
+ const hud=document.querySelector('#hud');if(screen!=='battle'||!deck){hud.innerHTML='';return;}
+ const signature=JSON.stringify([slow,selectedIndex,materialIndex,Math.floor(circuit.stock),[...skills,...deck.candidates].map(c=>[c.id,c.name,c.cooldown.toFixed(1)]),deck.draw.length,deck.discard.length,deck.exhausted.length]);if(signature===hudSignature)return;hudSignature=signature;
+ const check=type=>HandPause.check(circuit,deck,type,selectedHand(),materialIndex);
+ const op=(type,label)=>{const v=check(type);return `<button class="btn ${type==='fuse'?'accent':''}" data-command="${type}" title="${v.ok?label:v.reason}" ${v.ok?'':'disabled'}>${label}</button>`;};
+ const empty=(i,area)=>`<button class="empty-slot" ${area==='hand'&&i===skills.length&&slow?'data-slot="'+i+'"':'disabled'} aria-label="${area==='hand'?'手牌':'抽牌区'}空位 ${i+1}"><span>＋</span><small>${area==='hand'?'空手牌':'等待抽牌'}</small></button>`;
+ let hint='选择抽牌区卡牌与手牌，免费交换或同名融合。';
+ if(materialIndex>=0&&selectedIndex>=0){const v=check('fuse');hint=v.ok?'融合预览：'+Deck.spec({...skills[selectedIndex],level:skills[selectedIndex].level+1}).name+' · 素材本场耗尽':v.reason;}
+ else if(deck.candidates.length===5)hint='抽牌区已满：先选中一张候选牌，再抽牌替换；旧牌进入弃牌堆。';
+ hud.innerHTML=(slow?`<section class="candidate-area" aria-label="抽牌区"><div class="area-heading"><b>抽牌区 <span>${deck.candidates.length} / 5</span></b><small>开关时停保留 · 换出手牌留在此处</small></div><div class="card-grid">${Array.from({length:5},(_,i)=>deck.candidates[i]?cardButton(deck.candidates[i],i,'candidate'):empty(i,'candidate')).join('')}</div></section><div class="hand-tools">${op('draw',deck.candidates.length===5?'替换抽牌 · 20':'抽 1 张 · 20')}${op('exchange',skills.length<5&&selectedHand()===skills.length?'收入手牌 · 免费':'交换 · 免费')}${op('fuse','同名融合 · 20')}<button class="btn ghost" data-command="clear">取消选择</button><p role="status">${hint}</p></div>`:'')+
+ `<section class="hand-area" aria-label="当前手牌"><div class="area-heading"><b>当前手牌 <span>${skills.length} / 5</span></b><small>${slow?'融合强化仅本场生效':'Q W E R T / 1—5 · 再按一次施放'}</small></div><div class="card-grid">${Array.from({length:5},(_,i)=>skills[i]?cardButton(skills[i],i,'hand'):empty(i,'hand')).join('')}</div></section><div class="hand-footer"><span>牌堆 ${deck.draw.length} · 弃牌 ${deck.discard.length} · 耗尽 ${deck.exhausted.length}${slow?'':' · 抽牌区 '+deck.candidates.length}</span><div class="hand-actions">${!slow&&selectedIndex>=0?'<button class="btn primary" data-command="cast">施放选中牌</button>':''}<button class="btn ${slow?'primary':'pause-toggle'}" data-command="${slow?'end':'reorganize'}">${slow?'继续战斗':'进入时停'} <kbd>SPACE</kbd></button></div></div>`;
+}
+function renderBudget(){budgetEl.hidden=screen!=='battle'||!slow;if(!budgetEl.hidden)budgetEl.innerHTML=`<small>CIRCUIT</small><strong>${Math.floor(circuit.stock)}</strong><b>当前回路</b><p>抽牌 / 融合 <em>20</em><br>换牌 / 开关时停 <em>免费</em></p><small>没有时间消耗<br>退出保留余额</small>`;}
+C.addEventListener('pointermove',e=>{if(screen==='battle'&&!slow)aimPoint=worldPoint(e);});
+C.addEventListener('click',e=>{if(screen==='battle'&&!slow){aimPoint=worldPoint(e);moveTo(aimPoint);}});
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b||b.disabled)return;
+ if(b.dataset.slot!==undefined){slot(+b.dataset.slot);return;}if(b.dataset.candidate!==undefined){candidateSlot(+b.dataset.candidate);return;}
+ switch(b.dataset.command){case'reorganize':enterPause();break;case'cast':confirmSelected();break;case'clear':clearSelection();updateUI();break;case'draw':case'exchange':case'fuse':handAction(b.dataset.command);break;case'end':endPlan();break;}
+});
+addEventListener('keydown',e=>{
+ if(e.repeat||e.ctrlKey||e.metaKey||e.altKey||['INPUT','SELECT','TEXTAREA'].includes(e.target?.tagName))return;
+ if(e.key==='Escape'){
+  if(screen==='battle'&&slow)endPlan();else if(typeof deckViewerOpen!=='undefined'&&deckViewerOpen)closeBuild();else if(screen==='battle'&&selectedIndex>=0){clearSelection();updateUI();}else if(screen==='battle')pause();else if(screen==='pause')resume();else if(screen==='build')closeBuild();e.preventDefault();return;
+ }
+ if(e.key.toLowerCase()==='b'){if(screen==='battle')openDeckView();else if(screen==='cleared')openBuild();else if(screen==='build')closeBuild();return;}
+ if(screen!=='battle')return;if(e.code==='Space'){e.preventDefault();slow?endPlan():enterPause();return;}
+ if(e.key==='Backspace'&&slow){e.preventDefault();clearSelection();updateUI();return;}
+ const index='qwert12345'.indexOf(e.key.toLowerCase());if(index>=0){e.preventDefault();slot(index%5);}
+});
+addEventListener('contextmenu',e=>{if(screen==='battle'){e.preventDefault();clearSelection();updateUI();}});
+let lastFrame=performance.now();function frame(now){const dt=Math.min(.05,Math.max(0,(now-lastFrame)/1000));lastFrame=now;battleStep(dt);drawBattle();requestAnimationFrame(frame);}requestAnimationFrame(frame);
+
+</script><script data-source="battle-ui.js">
+function iso(x,y,z=0){const s=Math.min(innerWidth/18,75);return{x:innerWidth/2+(x-y)*s*.82,y:innerHeight*.43+(x+y)*s*.42-z*s};}
+function worldPoint(e){const s=Math.min(innerWidth/18,75),dx=(e.clientX-innerWidth/2)/(s*.82),dy=(e.clientY-innerHeight*.43)/(s*.42);return{x:Math.max(-6,Math.min(6,(dx+dy)/2)),y:Math.max(-6,Math.min(6,(dy-dx)/2))};}
+function resize(){C.width=innerWidth*devicePixelRatio;C.height=innerHeight*devicePixelRatio;X.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);}addEventListener('resize',resize);resize();
+function safePosition(x,y){return x>=-6&&x<=6&&y>=-6&&y<=6&&(!battlefield||!Battle.blocked(battlefield,x,y));}
+function moveActor(actor,x,y){if(safePosition(x,y)){actor.x=x;actor.y=y;}else{if(safePosition(x,actor.y))actor.x=x;if(safePosition(actor.x,y))actor.y=y;}}
+function clipped(actor,to){const dx=to.x-actor.x,dy=to.y-actor.y,d=Math.hypot(dx,dy);let end={x:actor.x,y:actor.y};for(let n=.08;n<d+.08;n+=.08){const f=Math.min(1,n/d),p={x:actor.x+dx*f,y:actor.y+dy*f};if(!safePosition(p.x,p.y))break;end=p;}return end;}
+function moveTo(to){
+ if(screen!=='battle'||slow)return false;hero.target={...to};return true;
+}
+function shapeForTrait(card,trait){
+ const origin={x:hero.x,y:hero.y};
+ if(trait==='defense')return{type:'circle',origin,radius:1};
+ if(trait==='debuff')return{type:'circle',origin,radius:3.2};
+ const shape=Battle.shape(trait==='attack'?0:trait==='single'?1:3,origin,aimPoint,trait==='move'?card.distance/4:1);
+ if(trait==='move'){const end=clipped(hero,shape.landing);shape.length=Math.hypot(end.x-origin.x,end.y-origin.y);shape.landing={...end,radius:shape.landing.radius};}
+ return shape;
+}
+function actionShape(card){return shapeForTrait(card,Deck.effects(card)[0]);}
+function drawPoly(points,fill,stroke){if(!points.length)return;X.beginPath();points.forEach((p,i)=>{p=iso(p.x,p.y,.02);i?X.lineTo(p.x,p.y):X.moveTo(p.x,p.y);});X.closePath();X.fillStyle=fill;X.strokeStyle=stroke;X.lineWidth=2;X.fill();X.stroke();}
+function circlePoints(o,r){return Array.from({length:49},(_,i)=>({x:o.x+Math.cos(i*Math.PI/24)*r,y:o.y+Math.sin(i*Math.PI/24)*r}));}
+function drawArea(s,fill='#5ef2d620',stroke='#5ef2d6'){
+ if(s.type==='circle')drawPoly(circlePoints(s.origin,s.radius),fill,stroke);
+ else if(s.type==='sector'){const a=s.halfAngle;drawPoly([s.origin,...Array.from({length:33},(_,i)=>({x:s.origin.x+Math.cos(s.angle-a+i*a/16)*s.radius,y:s.origin.y+Math.sin(s.angle-a+i*a/16)*s.radius}))],fill,stroke);}
+ else{const dx=Math.cos(s.angle),dy=Math.sin(s.angle),w=s.width/2,o=s.origin,end={x:o.x+dx*s.length,y:o.y+dy*s.length};drawPoly([{x:o.x-dy*w,y:o.y+dx*w},{x:end.x-dy*w,y:end.y+dx*w},{x:end.x+dy*w,y:end.y-dx*w},{x:o.x+dy*w,y:o.y-dx*w}],fill,stroke);if(s.type==='dash')drawPoly(circlePoints(s.landing,s.landing.radius),fill,stroke);}
+}
+function unit(o,c,size){
+ const p=iso(o.x,o.y,.08),base=iso(o.x,o.y);X.fillStyle='#0008';X.beginPath();X.ellipse(base.x,base.y+5,size*1.2,size*.48,0,0,Math.PI*2);X.fill();
+ X.fillStyle=c;X.strokeStyle=c;X.beginPath();X.moveTo(p.x,p.y-size*1.8);X.lineTo(p.x+size,p.y-size*.5);X.lineTo(p.x+size*.7,p.y+size);X.lineTo(p.x-size*.7,p.y+size);X.lineTo(p.x-size,p.y-size*.5);X.closePath();X.fill();X.stroke();
+}
+function tile(x,y){const p=iso(x,y),s=Math.min(innerWidth/18,75);drawPoly([{x:x- .5,y:y- .5},{x:x+.5,y:y-.5},{x:x+.5,y:y+.5},{x:x-.5,y:y+.5}],(x+y)%2?'#101a20':'#0c151a','#1a2a32');}
+function paintField(){
+ for(const o of battlefield.oil)drawPoly(circlePoints(o,.28),o.burning?'#ff732c90':'#181117ee',o.burning?'#ffbe65':'#786047');
+ for(const b of battlefield.barrels.filter(b=>b.hp>0)){const p=iso(b.x,b.y),top=iso(b.x,b.y,.4);X.fillStyle='#9e682d';X.fillRect(top.x-13,top.y,26,p.y-top.y);X.strokeStyle='#ffbf67';X.strokeRect(top.x-13,top.y,26,p.y-top.y);X.beginPath();X.ellipse(top.x,top.y,13,6,0,0,Math.PI*2);X.fill();X.stroke();X.font='12px system-ui';X.fillStyle='#ffe1a0';X.textAlign='center';X.fillText('油桶',top.x,top.y-9);}
+ for(const m of enemies.filter(m=>m.hp>0&&m.attack)){drawArea(m.attack.shape,'#ff646b26','#ff767d');const p=iso(m.x,m.y,.65);X.fillStyle='#ff9b9e';X.font='bold 13px system-ui';X.textAlign='center';X.fillText('! '+m.attack.remaining.toFixed(1),p.x,p.y);}
+ for(const effect of coverage)drawArea(effect.shape,effect.color+'35',effect.color);
+}
+function paintPlan(){
+ if(!slow&&selectedIndex>=0&&skills[selectedIndex])for(const trait of Deck.effects(skills[selectedIndex]))drawArea(shapeForTrait(skills[selectedIndex],trait),color(skills[selectedIndex])+'35',color(skills[selectedIndex]));
+}
+function drawBattle(){
+ X.clearRect(0,0,innerWidth,innerHeight);const g=X.createLinearGradient(0,0,0,innerHeight);g.addColorStop(0,'#0b1319');g.addColorStop(1,'#030507');X.fillStyle=g;X.fillRect(0,0,innerWidth,innerHeight);
+ for(let sum=-12;sum<=12;sum++)for(let x=-6;x<=6;x++){const y=sum-x;if(y>=-6&&y<=6)tile(x,y);}
+ if(!battlefield)return;paintField();
+ [...enemies.filter(m=>m.hp>0).map(m=>({...m,c:m.freeze?'#68d8ff':m.type==='guard'?'#ef7c63':'#c85c63',s:m.type==='guard'?22:13})),{...hero,c:'#5ef2d6',s:16}].sort((a,b)=>a.x+a.y-b.x-b.y).forEach(o=>{
+  unit(o,o.c,o.s);if(o.type){const p=iso(o.x,o.y,.7);X.fillStyle='#102028';X.fillRect(p.x-22,p.y-4,44,4);X.fillStyle=o.c;X.fillRect(p.x-22,p.y-4,44*Math.max(0,o.hp/o.max),4);}
+ });
+ if(hero.shield>0){const p=iso(hero.x,hero.y);X.strokeStyle='#5dc8ff';X.lineWidth=3;X.beginPath();X.ellipse(p.x,p.y-7,24,32,0,0,Math.PI*2);X.stroke();}
+ if(slow){X.fillStyle='#08161c35';X.fillRect(0,0,innerWidth,innerHeight);}if(screen==='battle')paintPlan();
+}
+
+</script><script data-source="journey.js">
+const G=Campaign;
+let buildReturn='cleared',noticeText='',deckViewerOpen=false,viewerSignature='',buildSelected=[],buildPreview=null;
+const roomLabels={combat:'战斗',event:'事件',rest:'休息'},roomMarks={combat:'⚔',event:'◇',rest:'♧'};
+function describeCard(card){const c=Deck.spec(card);return Deck.effects(c).map(t=>({attack:'前方伤害 '+24*(1+.25*c.level),defense:'获得护盾 '+c.shield,move:'向目标位移 '+c.distance+' 格',single:'直线伤害 '+60*(1+.25*c.level)+'，本场一次',debuff:'减速 '+Math.round(c.slowRatio*100)+'%，持续 '+c.slowDuration+' 秒'}[t])).join('；');}
+function menu(){run=null;resetBattle();deck=null;skills=[];enemies=[];battlefield=null;Object.assign(hero,{hp:100,shield:0});setScreen('menu');overlay.innerHTML=`<section class="modal-wrap menu-copy"><div class="eyebrow">TACTICAL CIRCUIT / WHITEBOX</div><h1>回路地牢</h1><div class="eng">CIRCUIT DUNGEON</div><p class="intro">让世界停下，让手牌改变。<br>五张手牌，十个房间，由你选择下一扇门。</p><div class="menu-actions"><button class="btn primary" data-action="new">开始探索 →</button><button class="btn ghost" data-action="help">操作指南</button></div><p class="save-note">5 场战斗 · 3 个事件 · 2 个休息点<br>自由时停 / 同名融合 / 金币变牌与拼接<br>本次探索内保留牌组变更，刷新页面将重新开始。</p></section>`;}
+function newRun(){run=G.createRun();resetBattle();hero.hp=100;hero.shield=0;skills=[];enemies=[];battlefield=null;noticeText='';buildSelected=[];buildPreview=null;if(G.enter(run,G.available(run)[0].id))openEncounter();}
+function openEncounter(){if(!run?.pending)return;const n=run.pending;if(n.type==='rest')showRest();else if(n.type==='event')showEvent();else startBattle();}
+function battleNav(){auxiliary.innerHTML='<nav class="battle-nav"><button class="btn" data-action="view-deck">牌组 [B]</button><button class="btn ghost" data-action="pause">暂停</button></nav>';deckViewerOpen=false;viewerSignature='';}
+function battleWon(){if(!G.win(run,hero.hp))return;resetBattle();deck=null;skills=[];showReward();}
+function showReward(){
+ if(!run?.reward)return;setScreen('reward');const n=run.pending;
+ overlay.innerHTML=`<section class="modal-wrap"><div class="eyebrow">ROOM ${String(n.number).padStart(2,'0')} / CLEARED</div><h1>${n.boss?'守门者已倒下':'战斗完成'}</h1><p class="lead">${n.name} · 选择一张卡牌加入本次探索牌组。</p><div class="reward-money">+30 金币 · 当前余额 ${run.coins}</div><div class="reward-grid">${run.reward.map((base,i)=>{const c=Deck.spec(base);return `<button class="reward-card" data-reward="${c.id}" aria-label="选择奖励 ${c.name}"><div class="card-no">REWARD / 0${i+1}</div><b>${c.name}</b><p>${describeCard(c)}</p><small>加入牌组 · CD ${c.cd}s</small></button>`;}).join('')}</div><p class="lead">三选一 · 奖励可在下一场抽到${n.boss?' · 领取后结算通关':' · 领取后可先用金币整理牌组'}。</p></section>`;
+}
+function showCleared(){
+ if(!run?.current)return;hero.hp=run.hp;hero.shield=0;setScreen('cleared');const n=run.current,doors=G.available(run);
+ overlay.innerHTML=`<section class="modal-wrap"><div class="room-summary"><div><div class="eyebrow">ROOM ${String(n.number).padStart(2,'0')} / 10 · COMPLETE</div><h1>${n.name}</h1><p class="lead">${noticeText||'房间已完成，出口已经开启。'}</p></div><button class="btn" data-action="build">打开牌组 · 变牌 / 拼接 <kbd>B</kbd></button></div><p class="lead">选择下一扇门。离开前，可以花金币调整本次探索的牌组。</p><div class="door-grid">${doors.map(d=>`<button class="room-door" data-door="${d.id}" aria-label="进入第 ${d.number} 房 ${roomLabels[d.type]}"><span class="door-icon">${roomMarks[d.type]}</span><h2>${roomLabels[d.type]}${d.boss?' · 最终战':''}</h2><b>${d.name}</b><p>${d.type==='combat'?'清除敌人 · 30 金币 + 卡牌三选一':d.type==='rest'?'安全休息 · 恢复最多 35 生命':'占位事件 · 安全继续'}</p><span class="door-cta">进入第 ${d.number} 房 →</span></button>`).join('')}</div><p class="forge-foot">已完成 ${run.path.length} / 10 · 牌组 ${run.loadout.length} 张 · 金币 ${run.coins} · 生命 ${run.hp} / 100</p></section>`;
+}
+function showRest(){hero.hp=run.hp;hero.shield=0;setScreen('rest');overlay.innerHTML=`<section class="modal-wrap"><div class="eyebrow">ROOM ${run.pending.number} / 10 · REST</div><h1>${run.pending.name}</h1><p class="lead">休息点占位 · 当前生命 ${run.hp} / 100。</p><div class="notice">在安静的房间中修复回路，恢复最多 35 生命。完成后可以打开牌组，或选择下一扇门。</div><button class="btn primary" data-action="rest">休息并恢复生命</button></section>`;}
+function showEvent(){hero.hp=run.hp;hero.shield=0;setScreen('event');overlay.innerHTML=`<section class="modal-wrap"><div class="eyebrow">ROOM ${run.pending.number} / 10 · EVENT</div><h1>${run.pending.name}</h1><p class="lead">事件占位 · 这里将发生一段未知的遭遇。</p><div class="notice">当前阶段不改变生命、金币或牌组。完成事件后，出口与牌组操作开放。</div><button class="btn primary" data-event="continue">完成事件 · 继续</button></section>`;}
+function openBuild(){if(!run||!['cleared','victory'].includes(screen)||!G.canManage(run)){toast('完成当前房间后才能操作牌组');return false;}buildReturn=screen;buildSelected=[];buildPreview=null;setScreen('build');renderBuild();return true;}
+function selectBuild(index){if(screen!=='build'||!run.loadout[index])return;buildPreview=null;const existing=buildSelected.indexOf(index);if(existing>=0)buildSelected.splice(existing,1);else if(buildSelected.length<2)buildSelected.push(index);else buildSelected=[index];renderBuild();}
+function workshopPreview(type){
+ if(screen!=='build'||!G.canManage(run))return false;const [a,b]=buildSelected;
+ if(type==='transform'){if(buildSelected.length!==1){toast('变牌需选择一张卡牌');return false;}if(run.coins<30){toast('金币不足，需要 30 金币');return false;}}
+ else if(type==='splice'){const rule=G.spliceRule(run,a,b);if(!rule.ok){toast(rule.reason);return false;}}else return false;
+ buildPreview={type,ids:buildSelected.map(i=>run.loadout[i].id)};renderBuild();return true;
+}
+function commitWorkshop(){
+ if(screen!=='build'||!buildPreview)return false;const {type,ids}=buildPreview,indices=ids.map(id=>run.loadout.findIndex(c=>c.id===id));
+ const result=type==='transform'?G.transform(run,indices[0]):G.splice(run,...indices);buildPreview=null;
+ if(!result.ok){toast(result.reason);renderBuild();return false;}noticeText=(type==='transform'?'变牌':'拼接')+'完成：'+Deck.spec(result.card).name+'，本次探索内永久保留。';buildSelected=[];toast(noticeText);renderBuild();return true;
+}
+function renderBuild(){
+ const [a,b]=buildSelected,primary=run.loadout[a],secondary=run.loadout[b],spliceRule=G.spliceRule(run,a,b);let preview='';
+ if(buildPreview){
+  const combined=buildPreview.type==='splice'?Deck.spec({kind:'splice',traits:[...Deck.effects(primary),...Deck.effects(secondary)],spliced:true,level:0}):null;
+  preview=`<div class="notice" role="status"><b>${combined?'拼接预览：'+combined.name:'变牌预览：'+Deck.spec(primary).name+' → 其他随机基础牌'}</b><p>${combined?describeCard(combined)+'；CD '+combined.cd+'s'+(combined.exhaust?'；使用后本场耗尽':''):'结果不会与原牌相同；现有词条将由新牌词条替换。'}</p><p>${combined?'消耗两张素材，生成一张牌；产物暂不能再次拼接。':'消耗 30 金币，牌组张数不变。'}变更在本次探索内永久保留。</p><div class="actions"><button class="btn primary" data-workshop="confirm">确认${combined?'拼接 · 50':'变牌 · 30'} 金币</button><button class="btn ghost" data-workshop="cancel">取消</button></div></div>`;
+ }
+ overlay.innerHTML=`<section class="sector workshop"><header class="page-head"><div><div class="eyebrow">ROOM WORKSHOP / 本次探索</div><h1>牌组整备</h1><p>选择 1 张变牌，或选择 2 张不同类型的基础牌拼接。</p></div><button class="btn" data-action="close-build">返回房间</button></header><div class="forge-summary"><b>金币 ${run.coins}</b><span>牌组 ${run.loadout.length} 张 · 至少保留 5 张 · 已选 ${buildSelected.length} 张</span></div><div class="workshop-actions"><button class="btn" data-workshop="transform" ${buildSelected.length===1&&run.coins>=30?'':'disabled'}>变牌 · 30 金币</button><button class="btn accent" data-workshop="splice" title="${spliceRule.ok?'':spliceRule.reason}" ${spliceRule.ok?'':'disabled'}>拼接 · 50 金币</button><button class="btn ghost" data-workshop="clear">清空选择</button></div>${preview||'<p class="forge-foot">变牌随机变成另一张基础牌；拼接随机继承两张素材各一个词条。当前占位牌各含一个词条。</p>'}<div class="loadout-grid">${run.loadout.map((base,i)=>{const c=Deck.spec(base),selected=buildSelected.includes(i);return `<button class="loadout-card ${selected?'selected':''}" data-build-card="${i}" aria-label="牌组第 ${i+1} 张 ${c.name}" aria-pressed="${selected}" style="--card-color:${color(c)}"><div class="loadout-heading"><span>卡牌 ${String(i+1).padStart(2,'0')}</span><b>${selected?'已选择':c.spliced?'已拼接':'基础牌'}</b></div><h2>${c.name}</h2><p>${describeCard(c)}</p><div class="card-budget"><span>CD ${c.cd}s</span><span>${c.spliced?'不能再次拼接':c.exhaust?'本场一次':'可重复施放'}</span></div></button>`;}).join('')}</div><p class="forge-foot">这里的变牌与拼接保留到本次探索结束。战斗中临时融合的 +1 / +2 不会写入此牌组。</p></section>`;updateUI();
+}
+function openDeckView(){if(screen!=='battle'||!deck)return;if(deckViewerOpen){closeBuild();return;}deckViewerOpen=true;viewerSignature='';refreshDeckViewer();}
+function refreshDeckViewer(){
+ if(screen!=='battle'||!deckViewerOpen||!deck)return;
+ const zones=[['手牌',deck.hand],['抽牌区 / 候选区',deck.candidates],['抽牌堆',deck.draw],['弃牌堆',deck.discard],['耗尽区',deck.exhausted]],signature=JSON.stringify([slow,zones.map(([name,cards])=>[name,cards.map(c=>[c.id,c.name,c.cooldown.toFixed(1)])])]);if(signature===viewerSignature)return;viewerSignature=signature;
+ auxiliary.innerHTML='<nav class="battle-nav"><button class="btn" data-action="view-deck">关闭牌组 [B]</button><button class="btn ghost" data-action="pause">暂停</button></nav>'+`<aside class="deck-viewer"><header><b>本场牌组 · ${run.loadout.length} 张</b><button class="btn" data-action="close-build">关闭</button></header><p>${slow?'时停中，世界仍冻结。':'实时战斗继续。'}融合只在本场有效，卡牌操作请回到下方牌区。</p>${zones.map(([name,cards])=>`<h3>${name} · ${cards.length}</h3>${cards.length?cards.map(c=>`<div><span>${c.name}</span><small>${c.cooldown>0?c.cooldown.toFixed(1)+'s':'就绪'}</small></div>`).join(''):'<p>暂无卡牌</p>'}`).join('')}</aside>`;
+}
+function closeBuild(){if(screen==='battle'&&deckViewerOpen){battleNav();return;}if(screen!=='build')return;buildSelected=[];buildPreview=null;buildReturn==='victory'?showVictory():showCleared();}
+function pause(){if(screen!=='battle')return;setScreen('pause');overlay.innerHTML='<section class="modal-wrap"><div class="eyebrow">PAUSED</div><h1>战斗已暂停</h1><p class="lead">手牌、抽牌区、冷却与回路保持不变。</p><button class="btn primary" data-action="resume">继续战斗</button></section>';}
+function resume(){if(screen!=='pause')return;setScreen('battle');battleNav();}
+function defeat(){resetBattle();deck=null;skills=[];setScreen('defeat');overlay.innerHTML='<section class="modal-wrap"><div class="eyebrow">CIRCUIT INTERRUPTED</div><h1>回路过载</h1><p class="lead">重试当前房间，保留之前获得的卡牌与牌组变更；本场临时融合重置。</p><div class="actions"><button class="btn primary" data-action="retry">重新挑战</button><button class="btn ghost" data-action="menu">主菜单</button></div></section>';}
+function showVictory(){hero.hp=run.hp;setScreen('victory');overlay.innerHTML=`<section class="modal-wrap"><div class="eyebrow">EXPEDITION COMPLETE</div><h1>十房探索完成</h1><p class="lead">最后的战斗与奖励已结算，你走出了回路地牢。</p><div class="run-summary"><div><strong>10 / 10</strong><small>完成房间</small></div><div><strong>5 · 3 · 2</strong><small>战斗 / 事件 / 休息</small></div><div><strong>${run.coins}</strong><small>剩余金币</small></div><div><strong>${run.loadout.length}</strong><small>牌组张数</small></div></div><div class="actions"><button class="btn primary" data-action="new">再次探索</button><button class="btn" data-action="build">查看与整理牌组</button><button class="btn ghost" data-action="menu">主菜单</button></div></section>`;}
+function help(){setScreen('help');overlay.innerHTML=`<section class="modal-wrap"><div class="eyebrow">FIELD MANUAL</div><h1>操作指南</h1><div class="help-box"><b>五张手牌</b><p>牌组初始有 10 张牌，五种基础牌各两张。首场手牌每种一张，后续战斗随机抽 5 张。攻击、防御、位移、debuff 牌可冷却后重复使用；一次性卡牌和含该词条的拼接牌使用后本场耗尽，下场恢复。</p><b>即时战斗</b><p>点地面移动，鼠标调整方向。Q W E R T / 1—5 选牌，再按同键或点“施放选中牌”。红色区域为敌人攻击预警。攻击、击败、躲避、护盾吸收等行为积累回路。</p><b>自由时停</b><p>每场开场时停，获得 100 回路。空格随时进入或退出，Esc 退出时停。开关免费，保留余额、手牌和抽牌区；回路为零仍可时停。世界、角色、状态与冷却冻结，不能移动或施法。</p><b>抽牌、交换、融合</b><p>花 20 回路抽 1 张，放入手牌上方的抽牌区，上限 5 张。满区时先选定要替换的候选牌；旧牌进入弃牌堆。牌堆为空会洗回弃牌。所有可用牌都在两排时，替换可能重新抽回同一张牌。</p><p>选候选牌与手牌可免费交换，换出牌留在抽牌区；手牌有空位时可直接收入。同基础名称可再花 20 回路融合，素材本场耗尽、手牌 +1，最高 +2，每级主要数值 +25%。换牌和融合保留冷却。强化仅本场有效。</p><b>十个房间</b><p>全程 5 战斗、3 事件、2 休息，第一与最后一房为战斗。每个房间完成后选择出口，不显示地图。每战获得 30 金币与卡牌三选一；事件暂为占位，休息恢复最多 35 生命。</p><b>金币牌组操作</b><p>房间完成后、选择出口前打开牌组。变牌花 30 金币：选一张牌，随机变成不同的基础牌。拼接花 50 金币：选择两种不同基础牌，各随机继承一个词条，形成一张新牌；当前每张占位牌只有一个词条。拼接牌不能再次拼接，冷却取两种词条较长值，牌组至少留 5 张。</p><p>变牌和拼接在本次十房探索内永久保留，刷新页面会重开。按 B 查看战斗牌组，或在已完成房间打开牌组工坊。触屏可通过卡牌和按钮操作。</p></div><button class="btn primary" data-action="menu">返回主菜单</button></section>`;}
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b||b.disabled)return;
+ if(b.dataset.reward&&screen==='reward'){if(G.claim(run,b.dataset.reward)){noticeText='奖励已加入牌组。可以整备后再选择出口。';run.won?showVictory():showCleared();}return;}
+ if(b.dataset.event&&screen==='event'){if(G.event(run,b.dataset.event)){noticeText='事件已完成。';showCleared();}return;}
+ if(b.dataset.door&&screen==='cleared'){if(G.enter(run,b.dataset.door)){noticeText='';openEncounter();}return;}
+ if(b.dataset.buildCard!==undefined){selectBuild(+b.dataset.buildCard);return;}
+ if(b.dataset.workshop&&screen==='build'){switch(b.dataset.workshop){case'transform':case'splice':workshopPreview(b.dataset.workshop);break;case'confirm':commitWorkshop();break;case'cancel':buildPreview=null;renderBuild();break;case'clear':buildSelected=[];buildPreview=null;renderBuild();break;}return;}
+ switch(b.dataset.action){case'new':newRun();break;case'menu':menu();break;case'help':help();break;case'rest':if(screen==='rest'&&G.rest(run)){noticeText='休息完成，生命已恢复。';showCleared();}break;case'build':openBuild();break;case'view-deck':openDeckView();break;case'close-build':closeBuild();break;case'pause':pause();break;case'resume':resume();break;case'retry':if(screen==='defeat')startBattle();break;}
+});
+menu();
+
+</script>
+</body></html>
