@@ -608,6 +608,10 @@
 			webLabel: "打开《零时之塔》TapTap 官方页",
 			pkg: "assets/回路地牢_战术白盒.html",
 			pkgLabel: "打开网页版游戏白盒",
+			docs: [
+				{ url: "https://github.com/Star-Winds/game-design-portfolio/blob/main/docs/战斗系统与卡牌构筑系统GDD.md", label: "查看战斗系统与卡牌构筑系统完整 GDD" },
+				{ url: "https://github.com/Star-Winds/game-design-portfolio/blob/main/docs/战斗系统设计｜GDD简略版.md", label: "查看战斗系统设计 GDD 简略版" }
+			],
 			vid: ""
 			}
 			];
@@ -616,7 +620,7 @@
 
 			function getProjects() {
 			try {
-			const stored = localStorage.getItem('gamedev_portfolio_v4');
+			const stored = localStorage.getItem('gamedev_portfolio_v5');
 			if (stored) {
 			const parsed = JSON.parse(stored);
 			if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -627,7 +631,7 @@
 
 			function saveProjects(data) {
 			try {
-			localStorage.setItem('gamedev_portfolio_v4', JSON.stringify(data));
+			localStorage.setItem('gamedev_portfolio_v5', JSON.stringify(data));
 			} catch (e) {}
 			renderStage();
 			}
@@ -674,6 +678,14 @@
 			resourceItems.push(`<div class="big-chip big-chip-pkg" onclick="openResource('${encodeURI(proj.pkg)}', 'PKG')">
 				<span>📦</span> ${proj.pkgLabel || '下载游戏 Demo / 安装包'}
 			</div>`);
+			}
+			if (Array.isArray(proj.docs)) {
+			proj.docs.forEach((doc) => {
+			if (!doc || !doc.url) return;
+			resourceItems.push(`<div class="big-chip big-chip-web" onclick="openResource('${encodeURI(doc.url)}', 'GDD')">
+				<span>📘</span> ${doc.label || '查看 GDD 文档'}
+			</div>`);
+			});
 			}
 			if (proj.vid) {
 			resourceItems.push(`<div class="big-chip big-chip-vid" onclick="openResource('${encodeURI(proj.vid)}', 'VID')">
@@ -983,3 +995,4 @@
 		</script>
 	</body>
 </html>
+
